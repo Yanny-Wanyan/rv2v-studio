@@ -47,11 +47,11 @@ body{
 .main{flex:1;display:flex;flex-direction:column;padding:12px 20px;max-width:1800px;width:100%;margin:0 auto;min-height:0}
 .video-section{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:auto 0;align-items:start}
 .video-panel{background:rgba(255,255,255,.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
-.video-panel-header{padding:9px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0;background:rgba(255,255,255,.3)}
+.video-panel-header{height:40px;min-height:40px;max-height:40px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0;background:rgba(255,255,255,.3);box-sizing:border-box;overflow:hidden}
 .vp-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;display:flex;align-items:center;gap:6px}
 .vp-title .rec{width:5px;height:5px;border-radius:50%;background:#EF4444;animation:pulse 1.5s infinite}
-.source-sel{display:flex;gap:3px}
-.src-btn{padding:4px 8px;border-radius:5px;font-size:10px;font-weight:500;color:var(--text3);border:none;background:transparent;cursor:pointer;transition:all .12s;font-family:inherit}
+.source-sel{display:flex;align-items:center;gap:3px;height:100%}
+.src-btn{height:24px;min-height:24px;padding:0 8px;border-radius:5px;line-height:24px;font-size:10px;font-weight:500;color:var(--text3);border:none;background:transparent;cursor:pointer;transition:all .12s;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
 .src-btn:hover{color:var(--text2);background:rgba(255,255,255,.4)}
 .src-btn.on{color:var(--accent);background:var(--accent-light)}
 .video-body{aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#1a1c2e 0%,#16202e 40%,#1c1a28 100%);position:relative;overflow:hidden}
@@ -280,24 +280,24 @@ var DATA={
     0:[
       {img:'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200&h=150&fit=crop',n:'白色T恤'},
       {img:'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=200&h=150&fit=crop',n:'牛仔夹克'},
-      {img:'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=200&h=150&fit=crop',n:'格纹衬衫'},
+      {img:'https://images.unsplash.com/photo-1603252109303-2751441dd157?w=400&h=300&fit=crop&auto=format',n:'格纹衬衫'},
       {img:'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=200&h=150&fit=crop',n:'连帽卫衣'}
     ],
     1:[
-      {img:'https://images.unsplash.com/photo-1588850561407-ed78c334e67a?w=200&h=150&fit=crop',n:'棒球帽'},
-      {img:'https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?w=200&h=150&fit=crop',n:'渔夫帽'},
-      {img:'https://images.unsplash.com/photo-1576871337622-98d48d1cf531?w=200&h=150&fit=crop',n:'针织毛线帽'}
+      {img:'https://images.unsplash.com/photo-1521369909029-2afed882baee?w=400&h=300&fit=crop&auto=format',n:'棒球帽'},
+      {img:'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=400&h=300&fit=crop&auto=format',n:'渔夫帽'},
+      {img:'https://images.unsplash.com/photo-1576871337622-98d48d1cf531?w=400&h=300&fit=crop&auto=format',n:'针织毛线帽'}
     ],
     2:[
-      {img:'https://images.unsplash.com/photo-1601924921557-45e8e0550fb9?w=200&h=150&fit=crop',n:'羊绒围巾'},
-      {img:'https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=200&h=150&fit=crop',n:'格纹围巾'},
-      {img:'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=200&h=150&fit=crop',n:'丝巾'}
+      {img:'https://images.unsplash.com/photo-1609803384069-19f3e5a70e70?w=400&h=300&fit=crop&auto=format',n:'羊绒围巾'},
+      {img:'https://images.unsplash.com/photo-1543076447-215ad9ba6923?w=400&h=300&fit=crop&auto=format',n:'格纹围巾'},
+      {img:'https://images.unsplash.com/photo-1609505848912-b7c3b8b4beda?w=400&h=300&fit=crop&auto=format',n:'丝巾'}
     ],
     3:[
       {img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200&h=150&fit=crop',n:'运动跑鞋'},
       {img:'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=200&h=150&fit=crop',n:'高帮板鞋'},
       {img:'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=200&h=150&fit=crop',n:'帆布鞋'},
-      {img:'https://images.unsplash.com/photo-1638247025967-b4e38f787b76?w=200&h=150&fit=crop',n:'切尔西靴'}
+      {img:'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&h=300&fit=crop&auto=format',n:'切尔西靴'}
     ]
   }
 };
@@ -389,6 +389,16 @@ function pickCard(gridId,idx,el){
 var curCat=0;
 function switchCat(i,el){curCat=i;document.querySelectorAll('.cat-btn').forEach(x=>x.classList.remove('on'));el.classList.add('on');renderCards('prodGrid',DATA.change_clothes[curCat])}
 renderCards('prodGrid',DATA.change_clothes[0]);
+
+/* === Image fail-safe fallback === */
+var IMG_FALLBACK = 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400&h=300&fit=crop&auto=format';
+document.addEventListener('error',function(e){
+  var t=e.target;
+  if(t && t.tagName==='IMG' && !t.dataset.fallbackApplied){
+    t.dataset.fallbackApplied='1';
+    t.src=IMG_FALLBACK;
+  }
+},true);
 
 /* Text option tags — descriptive prompts */
 var OPT_PROMPTS={
