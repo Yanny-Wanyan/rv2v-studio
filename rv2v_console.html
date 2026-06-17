@@ -163,7 +163,7 @@ body{
 .cat-btn:hover{color:var(--text2)}
 .cat-btn.on{color:var(--accent);border-color:rgba(37,99,235,.12);background:var(--accent-light)}
 
-/* Card grid — used by ALL panels */
+/* Card grid — used by clothing panel */
 .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px}
 .card-item{border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:all .15s;background:var(--border);display:flex;flex-direction:column}
 .card-item .card-img{aspect-ratio:4/3;overflow:hidden;background:#eee}
@@ -171,6 +171,12 @@ body{
 .card-item .card-label{padding:4px 6px;font-size:9px;color:var(--text2);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:rgba(255,255,255,.8)}
 .card-item:hover{border-color:var(--accent);transform:translateY(-1px)}
 .card-item.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-light)}
+
+/* Option tags — used by style/background/objects panels */
+.opt-row{display:flex;gap:6px;flex-wrap:wrap}
+.opt-tag{padding:6px 14px;border-radius:14px;border:1px solid rgba(0,0,0,.06);background:rgba(255,255,255,.6);font-size:11px;color:var(--text2);cursor:pointer;font-family:inherit;transition:all .12s}
+.opt-tag:hover{border-color:var(--accent);color:var(--accent)}
+.opt-tag.on{background:var(--accent-light);border-color:rgba(37,99,235,.18);color:var(--accent);font-weight:500}
 
 .hidden{display:none!important}
 @media(max-width:900px){.video-section{grid-template-columns:1fr}.main{padding:10px}}
@@ -213,7 +219,7 @@ body{
     <div class="video-panel">
       <div class="video-panel-header">
         <div class="vp-title">EDITED STREAM</div>
-        <span style="font-size:9px;color:var(--text3)">实时输出</span>
+        <div style="font-size:9px;color:var(--text3)">实时输出</div>
       </div>
       <div class="video-body">
         <div class="ed-badge"><i></i>实时渲染</div>
@@ -245,7 +251,7 @@ body{
       <button class="s-tag" onclick="toggleScene('change_clothes',this)">换装试穿</button>
       <button class="s-tag" onclick="toggleScene('style',this)">风格转换</button>
       <button class="s-tag" onclick="toggleScene('background',this)">背景替换</button>
-      <button class="s-tag" onclick="toggleScene('objects',this)">物体增删</button>
+      <button class="s-tag" onclick="toggleScene('objects',this)">基础修改</button>
     </div>
     <div class="exp-panel" id="p_change_clothes">
       <div class="exp-hd"><div class="exp-title">实时换装</div><button class="exp-close" onclick="closeP('change_clothes')"><i class="fas fa-times"></i></button></div>
@@ -254,52 +260,46 @@ body{
     </div>
     <div class="exp-panel" id="p_style">
       <div class="exp-hd"><div class="exp-title">风格转换</div><button class="exp-close" onclick="closeP('style')"><i class="fas fa-times"></i></button></div>
-      <div class="card-grid" id="styleGrid"></div>
+      <div class="opt-row"><button class="opt-tag" onclick="pickOpt(this,'style')">赛博朋克</button><button class="opt-tag" onclick="pickOpt(this,'style')">二次元动漫</button><button class="opt-tag" onclick="pickOpt(this,'style')">废土风</button><button class="opt-tag" onclick="pickOpt(this,'style')">日系治愈</button><button class="opt-tag" onclick="pickOpt(this,'style')">水墨国风</button><button class="opt-tag" onclick="pickOpt(this,'style')">胶片复古</button></div>
     </div>
     <div class="exp-panel" id="p_background">
       <div class="exp-hd"><div class="exp-title">背景替换</div><button class="exp-close" onclick="closeP('background')"><i class="fas fa-times"></i></button></div>
-      <div class="card-grid" id="bgGrid"></div>
+      <div class="opt-row"><button class="opt-tag" onclick="pickOpt(this,'background')">夕阳海滩</button><button class="opt-tag" onclick="pickOpt(this,'background')">雪山森林</button><button class="opt-tag" onclick="pickOpt(this,'background')">城市夜景</button><button class="opt-tag" onclick="pickOpt(this,'background')">日式庭院</button><button class="opt-tag" onclick="pickOpt(this,'background')">宇宙星空</button><button class="opt-tag" onclick="pickOpt(this,'background')">咖啡厅内</button></div>
     </div>
     <div class="exp-panel" id="p_objects">
-      <div class="exp-hd"><div class="exp-title">物体增删</div><button class="exp-close" onclick="closeP('objects')"><i class="fas fa-times"></i></button></div>
-      <div class="card-grid" id="objGrid"></div>
+      <div class="exp-hd"><div class="exp-title">基础修改</div><button class="exp-close" onclick="closeP('objects')"><i class="fas fa-times"></i></button></div>
+      <div class="opt-row"><button class="opt-tag" onclick="pickOpt(this,'objects')">添加墨镜</button><button class="opt-tag" onclick="pickOpt(this,'objects')">去掉眼镜</button><button class="opt-tag" onclick="pickOpt(this,'objects')">加一只猫</button><button class="opt-tag" onclick="pickOpt(this,'objects')">手持咖啡杯</button><button class="opt-tag" onclick="pickOpt(this,'objects')">移除背景杂物</button><button class="opt-tag" onclick="pickOpt(this,'objects')">添加耳环</button></div>
     </div>
   </div>
 </div>
 
 <script>
-/* === Data — all scenes now have images === */
+/* === Data — clothing with images === */
 var DATA={
   change_clothes:{
-    0:[{img:'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200&h=150&fit=crop',n:'白色T恤'},{img:'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&h=150&fit=crop',n:'牛仔夹克'},{img:'https://images.unsplash.com/photo-1589310243389-96a5483213a8?w=200&h=150&fit=crop',n:'格纹衬衫'},{img:'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=200&h=150&fit=crop',n:'连帽卫衣'}],
-    1:[{img:'https://images.unsplash.com/photo-1588850561407-ed78c334e67a?w=200&h=150&fit=crop',n:'棒球帽'},{img:'https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?w=200&h=150&fit=crop',n:'渔夫帽'},{img:'https://images.unsplash.com/photo-1521369909029-2afed882baee?w=200&h=150&fit=crop',n:'针织毛线帽'}],
-    2:[{img:'https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=200&h=150&fit=crop',n:'羊绒围巾'},{img:'https://images.unsplash.com/photo-1457545195570-67f207084966?w=200&h=150&fit=crop',n:'格纹围巾'},{img:'https://images.unsplash.com/photo-1601924921557-45e8e0550fb9?w=200&h=150&fit=crop',n:'丝巾'}],
-    3:[{img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200&h=150&fit=crop',n:'运动跑鞋'},{img:'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=200&h=150&fit=crop',n:'高帮板鞋'},{img:'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=200&h=150&fit=crop',n:'帆布鞋'},{img:'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=200&h=150&fit=crop',n:'切尔西靴'}]
-  },
-  style:[
-    {img:'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=200&h=150&fit=crop',n:'赛博朋克'},
-    {img:'https://images.unsplash.com/photo-1607604276583-3d7a45637600?w=200&h=150&fit=crop',n:'二次元动漫'},
-    {img:'https://images.unsplash.com/photo-1542397284385-6010376c5337?w=200&h=150&fit=crop',n:'废土风'},
-    {img:'https://images.unsplash.com/photo-1490750967868-88aa4f1b0caa?w=200&h=150&fit=crop',n:'日系治愈'},
-    {img:'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=200&h=150&fit=crop',n:'水墨国风'},
-    {img:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=200&h=150&fit=crop',n:'胶片复古'}
-  ],
-  background:[
-    {img:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200&h=150&fit=crop',n:'夕阳海滩'},
-    {img:'https://images.unsplash.com/photo-1477346611705-65d1883cee1e?w=200&h=150&fit=crop',n:'雪山森林'},
-    {img:'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=200&h=150&fit=crop',n:'城市夜景'},
-    {img:'https://images.unsplash.com/photo-1528164344885-47b1492d932a?w=200&h=150&fit=crop',n:'日式庭院'},
-    {img:'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=200&h=150&fit=crop',n:'宇宙星空'},
-    {img:'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=200&h=150&fit=crop',n:'咖啡厅内'}
-  ],
-  objects:[
-    {img:'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=200&h=150&fit=crop',n:'添加墨镜'},
-    {img:'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=200&h=150&fit=crop',n:'去掉眼镜'},
-    {img:'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200&h=150&fit=crop',n:'加一只猫'},
-    {img:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=200&h=150&fit=crop',n:'手持咖啡杯'},
-    {img:'https://images.unsplash.com/photo-1527689368864-3a821dbccc34?w=200&h=150&fit=crop',n:'移除杂物'},
-    {img:'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=200&h=150&fit=crop',n:'添加耳环'}
-  ]
+    0:[
+      {img:'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200&h=150&fit=crop',n:'白色T恤'},
+      {img:'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=200&h=150&fit=crop',n:'牛仔夹克'},
+      {img:'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=200&h=150&fit=crop',n:'格纹衬衫'},
+      {img:'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=200&h=150&fit=crop',n:'连帽卫衣'}
+    ],
+    1:[
+      {img:'https://images.unsplash.com/photo-1588850561407-ed78c334e67a?w=200&h=150&fit=crop',n:'棒球帽'},
+      {img:'https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?w=200&h=150&fit=crop',n:'渔夫帽'},
+      {img:'https://images.unsplash.com/photo-1576871337622-98d48d1cf531?w=200&h=150&fit=crop',n:'针织毛线帽'}
+    ],
+    2:[
+      {img:'https://images.unsplash.com/photo-1601924921557-45e8e0550fb9?w=200&h=150&fit=crop',n:'羊绒围巾'},
+      {img:'https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=200&h=150&fit=crop',n:'格纹围巾'},
+      {img:'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=200&h=150&fit=crop',n:'丝巾'}
+    ],
+    3:[
+      {img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200&h=150&fit=crop',n:'运动跑鞋'},
+      {img:'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=200&h=150&fit=crop',n:'高帮板鞋'},
+      {img:'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=200&h=150&fit=crop',n:'帆布鞋'},
+      {img:'https://images.unsplash.com/photo-1638247025967-b4e38f787b76?w=200&h=150&fit=crop',n:'切尔西靴'}
+    ]
+  }
 };
 
 /* === Video source === */
@@ -379,24 +379,51 @@ function renderCards(gridId, items, prefix){
 function pickCard(gridId,idx,el){
   document.getElementById(gridId).querySelectorAll('.card-item').forEach(x=>x.classList.remove('on'));
   el.classList.add('on');
-  var item;
-  if(gridId==='prodGrid') item=DATA.change_clothes[curCat][idx];
-  else if(gridId==='styleGrid') item=DATA.style[idx];
-  else if(gridId==='bgGrid') item=DATA.background[idx];
-  else item=DATA.objects[idx];
-  var prefixMap={prodGrid:'换装：',styleGrid:'风格转换：',bgGrid:'背景替换：',objGrid:''};
-  document.getElementById('chatIn').value=(prefixMap[gridId]||'')+item.n;
+  var item=DATA.change_clothes[curCat][idx];
+  document.getElementById('chatIn').value='把衣服换成'+item.n+'，保持自然贴合效果';
   setSlotImg(item.img);
   document.getElementById('chatIn').focus();
 }
 
 /* Clothing with sub-tabs */
 var curCat=0;
-function switchCat(i,el){curCat=i;document.querySelectorAll('.cat-btn').forEach(x=>x.classList.remove('on'));el.classList.add('on');renderCards('prodGrid',DATA.change_clothes[curCat],'换装：')}
-renderCards('prodGrid',DATA.change_clothes[0],'换装：');
-renderCards('styleGrid',DATA.style,'风格转换：');
-renderCards('bgGrid',DATA.background,'背景替换：');
-renderCards('objGrid',DATA.objects,'');
+function switchCat(i,el){curCat=i;document.querySelectorAll('.cat-btn').forEach(x=>x.classList.remove('on'));el.classList.add('on');renderCards('prodGrid',DATA.change_clothes[curCat])}
+renderCards('prodGrid',DATA.change_clothes[0]);
+
+/* Text option tags — descriptive prompts */
+var OPT_PROMPTS={
+  style:{
+    '赛博朋克':'把整个画面转换为赛博朋克风格，加入霓虹灯光和未来科技感的色调',
+    '二次元动漫':'将画面转换为日系二次元动漫画风，线条清晰色彩鲜明',
+    '废土风':'把画面风格改为末日废土风，色调偏黄灰，增加颗粒感和破败质感',
+    '日系治愈':'转换为日系治愈风格，色调柔和温暖，整体画面明亮通透',
+    '水墨国风':'将画面转换为中国水墨画风格，笔触写意，留白自然',
+    '胶片复古':'应用胶片复古效果，增加颗粒感、暗角和偏暖的褪色色调'
+  },
+  background:{
+    '夕阳海滩':'把背景替换为日落时分的海滩场景，天空有橙红色晚霞',
+    '雪山森林':'将背景换成白雪覆盖的山脉和松树林',
+    '城市夜景':'把背景替换为高楼林立的城市夜景，灯光璀璨',
+    '日式庭院':'将背景换成安静的日式枯山水庭院',
+    '宇宙星空':'把背景替换为浩瀚的宇宙星空，星云和星辰',
+    '咖啡厅内':'将背景换成温馨的咖啡厅室内环境，暖色灯光'
+  },
+  objects:{
+    '添加墨镜':'在人物脸上添加一副黑色飞行员墨镜',
+    '去掉眼镜':'把人物脸上佩戴的眼镜去掉，还原无眼镜的样子',
+    '加一只猫':'在画面中人物旁边添加一只橘色小猫',
+    '手持咖啡杯':'让人物手里拿着一杯冒着热气的咖啡',
+    '移除背景杂物':'把背景中多余的杂物和干扰元素移除掉',
+    '添加耳环':'给人物耳朵上添加一对银色圆环耳环'
+  }
+};
+function pickOpt(el,grp){
+  var was=el.classList.contains('on');
+  el.parentElement.querySelectorAll('.opt-tag').forEach(x=>x.classList.remove('on'));
+  var inp=document.getElementById('chatIn');
+  if(!was){el.classList.add('on');inp.value=OPT_PROMPTS[grp][el.textContent]||el.textContent;inp.focus()}
+  else{inp.value=''}
+}
 
 /* === History === */
 var hist=[];
@@ -432,7 +459,7 @@ function doSpark(){
   var btn=document.getElementById('sparkBtn');btn.classList.remove('sparkling');void btn.offsetHeight;btn.classList.add('sparkling');
   setTimeout(()=>btn.classList.remove('sparkling'),450);
   var sc=document.querySelector('.s-tag.on'),key='general';
-  if(sc){var m={'换装试穿':'change_clothes','风格转换':'style','背景替换':'background','物体增删':'objects'};key=m[sc.textContent]||'general'}
+  if(sc){var m={'换装试穿':'change_clothes','风格转换':'style','背景替换':'background','基础修改':'objects'};key=m[sc.textContent]||'general'}
   var pool=PROMPTS[key];document.getElementById('chatIn').value=pool[Math.floor(Math.random()*pool.length)];document.getElementById('chatIn').focus();
 }
 
