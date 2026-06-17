@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>RV2V Studio — 实时视频编辑</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F4F5F7;
+  --surface:rgba(255,255,255,.72);
+  --border:rgba(0,0,0,.06);
+  --text:#1A1A1A;
+  --text2:#555;
+  --text3:#999;
+  --accent:#2563EB;
+  --accent-light:#EFF6FF;
+  --radius:14px;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.05);
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes breathe{0%,100%{opacity:.25;transform:scale(1)}50%{opacity:.4;transform:scale(1.04)}}
+@keyframes sparkle{0%{transform:rotate(0) scale(1)}25%{transform:rotate(-15deg) scale(1.15)}50%{transform:rotate(10deg) scale(1.1)}75%{transform:rotate(-5deg) scale(1.05)}100%{transform:rotate(0) scale(1)}}
+@keyframes popUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+body{
+  font-family:-apple-system,'SF Pro Display','Segoe UI','PingFang SC','Hiragino Sans GB',sans-serif;
+  background:linear-gradient(135deg,#EEF0F5 0%,#F4F0FA 40%,#EDF5FF 100%);
+  background-size:200% 200%;animation:gradientShift 20s ease infinite;
+  color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column;
+}
+.header{
+  height:48px;background:rgba(255,255,255,.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;
+}
+.brand{font-size:14px;font-weight:700;display:flex;align-items:center;gap:9px}
+.brand .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.icon-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.5);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;position:relative}
+.icon-btn:hover{border-color:rgba(0,0,0,.1);color:var(--text2);background:rgba(255,255,255,.8)}
+.icon-btn:active{transform:scale(.92)}
+.icon-btn svg{width:15px;height:15px}
+.icon-btn::after{content:attr(data-tip);position:absolute;bottom:-28px;left:50%;transform:translateX(-50%) scale(.92);padding:3px 9px;border-radius:5px;background:#333;color:#fff;font-size:10px;white-space:nowrap;opacity:0;pointer-events:none;transition:all .12s;z-index:10}
+.icon-btn:hover::after{opacity:1;transform:translateX(-50%) scale(1)}
+
+.main{flex:1;display:flex;flex-direction:column;padding:12px 20px;max-width:1800px;width:100%;margin:0 auto;min-height:0}
+.video-section{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:auto 0}
+.video-panel{background:rgba(255,255,255,.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
+.video-panel-header{padding:9px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0;background:rgba(255,255,255,.3)}
+.vp-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;display:flex;align-items:center;gap:6px}
+.vp-title .rec{width:5px;height:5px;border-radius:50%;background:#EF4444;animation:pulse 1.5s infinite}
+.source-sel{display:flex;gap:3px}
+.src-btn{padding:4px 8px;border-radius:5px;font-size:10px;font-weight:500;color:var(--text3);border:none;background:transparent;cursor:pointer;transition:all .12s;font-family:inherit}
+.src-btn:hover{color:var(--text2);background:rgba(255,255,255,.4)}
+.src-btn.on{color:var(--accent);background:var(--accent-light)}
+.video-body{aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#1a1c2e 0%,#16202e 40%,#1c1a28 100%);position:relative;overflow:hidden}
+.video-body video{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.v-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,.2);animation:breathe 4s ease-in-out infinite}
+.v-placeholder i{font-size:24px}
+.v-placeholder p{font-size:10px}
+.ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);z-index:5;cursor:pointer;transition:background .2s}
+.ov:hover{background:rgba(0,0,0,.5)}
+.ov-inner{text-align:center;color:rgba(255,255,255,.6)}
+.ov-inner i{font-size:28px;margin-bottom:6px;display:block}
+.ov-inner p{font-size:10px;opacity:.7}
+.ov input[type=file]{display:none}
+.ov-stream{cursor:default}
+.ov-stream .sf{display:flex;gap:6px;width:320px}
+.ov-stream .sf input{flex:1;padding:8px 11px;border-radius:7px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-size:11px;font-family:inherit}
+.ov-stream .sf input::placeholder{color:rgba(255,255,255,.3)}
+.ov-stream .sf input:focus{outline:none;border-color:var(--accent)}
+.ov-stream .sf button{padding:8px 13px;border-radius:7px;border:none;background:var(--accent);color:#fff;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit}
+.ov-call{cursor:default}
+.ov-call button{padding:10px 22px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;transition:all .15s}
+.ov-call button:hover{background:rgba(255,255,255,.1)}
+.ed-badge{position:absolute;top:8px;left:8px;padding:3px 8px;border-radius:5px;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);font-size:9px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:4px}
+.ed-badge i{width:4px;height:4px;border-radius:50%;background:#22C55E;animation:pulse 1.5s infinite;display:inline-block}
+
+/* Command bar */
+.command-bar{flex-shrink:0;position:relative;background:rgba(255,255,255,.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);padding:12px 16px;margin-top:12px}
+
+/* History — always visible */
+.cmd-history{max-height:40px;overflow-y:auto;margin-bottom:10px;scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.06) transparent}
+.cmd-history::-webkit-scrollbar{width:2px}
+.cmd-history::-webkit-scrollbar-thumb{background:rgba(0,0,0,.08);border-radius:2px}
+.h-empty{display:flex;align-items:center;gap:6px;padding:6px 11px;font-size:11px;color:var(--text3)}
+.h-empty i{font-size:10px;opacity:.5}
+.h-item{display:flex;align-items:center;gap:8px;padding:6px 11px;border-radius:7px;background:rgba(0,0,0,.03);font-size:11px;color:var(--text2);margin-bottom:3px;position:relative}
+.h-item:last-child{margin-bottom:0}
+.h-item .h-dot{width:4px;height:4px;border-radius:50%;background:#22C55E;flex-shrink:0}
+.h-item .h-thumb{width:20px;height:20px;border-radius:4px;object-fit:cover;cursor:pointer;flex-shrink:0;border:1px solid var(--border)}
+.h-item .h-text{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.h-item .h-badge{font-size:9px;color:#22C55E;font-weight:600;flex-shrink:0}
+/* Image preview popover on history item */
+.h-preview{display:none;position:absolute;bottom:calc(100% + 6px);left:30px;width:160px;border-radius:8px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.12);border:1px solid var(--border);z-index:30;background:#fff}
+.h-preview.show{display:block;animation:fadeIn .15s ease}
+.h-preview img{width:100%;display:block}
+
+/* Input capsule */
+.input-capsule{display:flex;align-items:center;border:1px solid var(--border);border-radius:26px;background:rgba(255,255,255,.5);padding:6px 6px 6px 8px;transition:border-color .2s,box-shadow .2s;gap:4px;min-height:52px}
+.input-capsule:focus-within{border-color:rgba(37,99,235,.3);box-shadow:0 0 0 3px rgba(37,99,235,.06)}
+
+/* Image slot — 3:4 tilted card like Jimeng */
+.img-slot{
+  width:36px;height:46px;border-radius:6px;flex-shrink:0;
+  border:1.5px dashed rgba(0,0,0,.1);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;overflow:hidden;position:relative;
+  transition:all .15s;
+  transform:rotate(-6deg);
+  background:rgba(0,0,0,.015);
+}
+.img-slot:hover{border-color:rgba(0,0,0,.2);background:rgba(0,0,0,.03)}
+.img-slot svg{width:14px;height:14px;color:var(--text3);opacity:.4}
+.img-slot.has-img{border:none;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.img-slot.has-img svg{display:none}
+.img-slot img{width:100%;height:100%;object-fit:cover;display:none;border-radius:5px}
+.img-slot.has-img img{display:block}
+.img-slot .img-rm{
+  position:absolute;top:-5px;right:-5px;width:15px;height:15px;border-radius:50%;
+  background:#fff;border:1px solid rgba(0,0,0,.08);color:var(--text3);
+  font-size:7px;display:none;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 1px 4px rgba(0,0,0,.1);transform:rotate(6deg);
+}
+.img-slot.has-img .img-rm{display:flex}
+.img-slot.has-img .img-rm:hover{background:#f5f5f5;color:var(--text)}
+.img-slot input{display:none}
+
+.cap-btn{width:34px;height:34px;border-radius:50%;border:none;background:transparent;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;flex-shrink:0;position:relative}
+.cap-btn:hover{color:var(--text2);background:rgba(0,0,0,.04)}
+.cap-btn:active{transform:scale(.9)}
+.cap-btn svg{width:15px;height:15px}
+.cap-btn::after{content:attr(data-tip);position:absolute;bottom:-26px;left:50%;transform:translateX(-50%) scale(.9);padding:3px 8px;border-radius:4px;background:#333;color:#fff;font-size:9px;white-space:nowrap;opacity:0;pointer-events:none;transition:all .1s;z-index:10}
+.cap-btn:hover::after{opacity:1;transform:translateX(-50%) scale(1)}
+.cap-btn.sparkling svg{animation:sparkle .45s ease}
+.cap-input{flex:1;height:36px;line-height:36px;border:none;background:transparent;font-size:13px;color:var(--text);font-family:inherit;outline:none;padding:0 6px}
+.cap-input::placeholder{color:var(--text3)}
+.cap-send{width:36px;height:36px;border-radius:50%;border:none;background:var(--accent);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s}
+.cap-send:hover{background:#1D4ED8}
+.cap-send:active{transform:scale(.92)}
+.cap-send i{font-size:11px}
+
+/* Scene row */
+.scene-row{display:flex;gap:6px;margin-top:10px;align-items:center}
+.scene-row .lbl{font-size:10px;color:var(--text3);font-weight:500;margin-right:2px}
+.s-tag{padding:5px 12px;border-radius:16px;border:1px solid var(--border);background:rgba(255,255,255,.5);font-size:11px;color:var(--text2);cursor:pointer;transition:all .12s;font-family:inherit}
+.s-tag:hover{border-color:var(--accent);color:var(--accent)}
+.s-tag.on{background:var(--accent-light);border-color:rgba(37,99,235,.18);color:var(--accent);font-weight:500}
+
+/* Expand panel */
+.exp-panel{display:none;position:absolute;bottom:100%;left:0;right:0;margin-bottom:8px;padding:14px;background:#F0F1F4;border-radius:var(--radius);border:1px solid rgba(0,0,0,.05);box-shadow:0 -2px 24px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.04);z-index:20;animation:popUp .2s ease}
+.exp-panel.show{display:block}
+.exp-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.exp-title{font-size:11px;font-weight:600;color:var(--text)}
+.exp-close{width:20px;height:20px;border-radius:5px;border:none;background:transparent;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px}
+.exp-close:hover{background:rgba(0,0,0,.05);color:var(--text)}
+.cat-row{display:flex;gap:3px;margin-bottom:9px}
+.cat-btn{padding:4px 11px;border-radius:6px;font-size:10px;font-weight:500;color:var(--text3);border:1px solid transparent;background:rgba(255,255,255,.6);cursor:pointer;font-family:inherit;transition:all .12s}
+.cat-btn:hover{color:var(--text2)}
+.cat-btn.on{color:var(--accent);border-color:rgba(37,99,235,.12);background:var(--accent-light)}
+
+/* Card grid — used by ALL panels */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px}
+.card-item{border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:all .15s;background:var(--border);display:flex;flex-direction:column}
+.card-item .card-img{aspect-ratio:4/3;overflow:hidden;background:#eee}
+.card-item .card-img img{width:100%;height:100%;object-fit:cover;display:block}
+.card-item .card-label{padding:4px 6px;font-size:9px;color:var(--text2);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:rgba(255,255,255,.8)}
+.card-item:hover{border-color:var(--accent);transform:translateY(-1px)}
+.card-item.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-light)}
+
+.hidden{display:none!important}
+@media(max-width:900px){.video-section{grid-template-columns:1fr}.main{padding:10px}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand"><span class="dot"></span>RV2V Studio</div>
+  <button class="icon-btn" data-tip="新建会话" onclick="newSession()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+      <line x1="12" y1="9" x2="12" y2="15"/><line x1="9" y1="12" x2="15" y2="12"/>
+    </svg>
+  </button>
+</div>
+
+<div class="main">
+  <div class="video-section">
+    <div class="video-panel">
+      <div class="video-panel-header">
+        <div class="vp-title"><span class="rec"></span>CAMERA FEED</div>
+        <div class="source-sel">
+          <button class="src-btn on" onclick="switchSrc('upload',this)"><i class="fas fa-upload"></i> 上传</button>
+          <button class="src-btn" onclick="switchSrc('stream',this)"><i class="fas fa-signal"></i> 直播流</button>
+          <button class="src-btn" onclick="switchSrc('call',this)"><i class="fas fa-video"></i> 通话</button>
+        </div>
+      </div>
+      <div class="video-body" id="camBody">
+        <div class="ov" id="ovUpload" onclick="document.getElementById('fileIn').click()">
+          <div class="ov-inner"><i class="fas fa-cloud-arrow-up"></i><p>点击或拖拽上传视频</p></div>
+          <input type="file" id="fileIn" accept="video/*" onchange="onUpload(event)">
+        </div>
+        <div class="ov ov-stream hidden" id="ovStream"><div class="sf"><input type="text" id="streamUrl" placeholder="rtmp://stream.example.com/live/key"><button onclick="doStream()">连接</button></div></div>
+        <div class="ov ov-call hidden" id="ovCall"><button onclick="doCall()"><i class="fas fa-phone"></i>发起视频通话</button></div>
+        <video id="camVid" class="hidden" loop muted playsinline></video>
+        <div class="v-placeholder" id="camPH"><i class="fas fa-video-slash"></i><p>等待视频输入</p></div>
+      </div>
+    </div>
+    <div class="video-panel">
+      <div class="video-panel-header">
+        <div class="vp-title">EDITED STREAM</div>
+        <span style="font-size:9px;color:var(--text3)">实时输出</span>
+      </div>
+      <div class="video-body">
+        <div class="ed-badge"><i></i>实时渲染</div>
+        <video id="edVid" class="hidden" loop muted playsinline></video>
+        <div class="v-placeholder" id="edPH"><i class="fas fa-wand-magic-sparkles"></i><p>等待编辑指令</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="command-bar">
+    <div class="cmd-history" id="history"><div id="histList"><div class="h-empty"><i class="fas fa-clock-rotate-left"></i>发送的指令会出现在这里</div></div></div>
+    <div class="input-capsule">
+      <div class="img-slot" id="imgSlot" onclick="document.getElementById('imgIn').click()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        <img id="slotImg">
+        <span class="img-rm" onclick="event.stopPropagation();rmSlotImg()"><i class="fas fa-times"></i></span>
+        <input type="file" id="imgIn" accept="image/*" onchange="onSlotImg(event)">
+      </div>
+      <button class="cap-btn" id="sparkBtn" data-tip="随机灵感" onclick="doSpark()">
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2 L13.5 9 L20 12 L13.5 15 L12 22 L10.5 15 L4 12 L10.5 9 Z"/></svg>
+      </button>
+      <input class="cap-input" id="chatIn" type="text" placeholder="接入一段视频，试试替换、增减画面里的任何东西">
+      <button class="cap-send" onclick="send()"><i class="fas fa-arrow-up"></i></button>
+    </div>
+    <div class="scene-row">
+      <span class="lbl">场景：</span>
+      <button class="s-tag" onclick="toggleScene('change_clothes',this)">换装试穿</button>
+      <button class="s-tag" onclick="toggleScene('style',this)">风格转换</button>
+      <button class="s-tag" onclick="toggleScene('background',this)">背景替换</button>
+      <button class="s-tag" onclick="toggleScene('objects',this)">物体增删</button>
+    </div>
+    <div class="exp-panel" id="p_change_clothes">
+      <div class="exp-hd"><div class="exp-title">实时换装</div><button class="exp-close" onclick="closeP('change_clothes')"><i class="fas fa-times"></i></button></div>
+      <div class="cat-row"><button class="cat-btn on" onclick="switchCat(0,this)">服饰</button><button class="cat-btn" onclick="switchCat(1,this)">帽子</button><button class="cat-btn" onclick="switchCat(2,this)">围巾</button><button class="cat-btn" onclick="switchCat(3,this)">鞋</button></div>
+      <div class="card-grid" id="prodGrid"></div>
+    </div>
+    <div class="exp-panel" id="p_style">
+      <div class="exp-hd"><div class="exp-title">风格转换</div><button class="exp-close" onclick="closeP('style')"><i class="fas fa-times"></i></button></div>
+      <div class="card-grid" id="styleGrid"></div>
+    </div>
+    <div class="exp-panel" id="p_background">
+      <div class="exp-hd"><div class="exp-title">背景替换</div><button class="exp-close" onclick="closeP('background')"><i class="fas fa-times"></i></button></div>
+      <div class="card-grid" id="bgGrid"></div>
+    </div>
+    <div class="exp-panel" id="p_objects">
+      <div class="exp-hd"><div class="exp-title">物体增删</div><button class="exp-close" onclick="closeP('objects')"><i class="fas fa-times"></i></button></div>
+      <div class="card-grid" id="objGrid"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* === Data — all scenes now have images === */
+var DATA={
+  change_clothes:{
+    0:[{img:'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200&h=150&fit=crop',n:'白色T恤'},{img:'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&h=150&fit=crop',n:'牛仔夹克'},{img:'https://images.unsplash.com/photo-1434389677669-e08b4cda3a40?w=200&h=150&fit=crop',n:'格纹衬衫'},{img:'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=200&h=150&fit=crop',n:'连帽卫衣'}],
+    1:[{img:'https://images.unsplash.com/photo-1588850561407-ed78c334e67a?w=200&h=150&fit=crop',n:'棒球帽'},{img:'https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?w=200&h=150&fit=crop',n:'渔夫帽'},{img:'https://images.unsplash.com/photo-1521369909029-2afed882baee?w=200&h=150&fit=crop',n:'针织毛线帽'}],
+    2:[{img:'https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=200&h=150&fit=crop',n:'羊绒围巾'},{img:'https://images.unsplash.com/photo-1457545195570-67f207084966?w=200&h=150&fit=crop',n:'格纹围巾'},{img:'https://images.unsplash.com/photo-1601924921557-45e8e0550fb9?w=200&h=150&fit=crop',n:'丝巾'}],
+    3:[{img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200&h=150&fit=crop',n:'运动跑鞋'},{img:'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=200&h=150&fit=crop',n:'高帮板鞋'},{img:'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=200&h=150&fit=crop',n:'帆布鞋'},{img:'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=200&h=150&fit=crop',n:'切尔西靴'}]
+  },
+  style:[
+    {img:'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=200&h=150&fit=crop',n:'赛博朋克'},
+    {img:'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=200&h=150&fit=crop',n:'二次元动漫'},
+    {img:'https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=200&h=150&fit=crop',n:'废土风'},
+    {img:'https://images.unsplash.com/photo-1490750967868-88aa4f1b0caa?w=200&h=150&fit=crop',n:'日系治愈'},
+    {img:'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=200&h=150&fit=crop',n:'水墨国风'},
+    {img:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=200&h=150&fit=crop',n:'胶片复古'}
+  ],
+  background:[
+    {img:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200&h=150&fit=crop',n:'夕阳海滩'},
+    {img:'https://images.unsplash.com/photo-1477346611705-65d1883cee1e?w=200&h=150&fit=crop',n:'雪山森林'},
+    {img:'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=200&h=150&fit=crop',n:'城市夜景'},
+    {img:'https://images.unsplash.com/photo-1528164344885-47b1492d932a?w=200&h=150&fit=crop',n:'日式庭院'},
+    {img:'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=200&h=150&fit=crop',n:'宇宙星空'},
+    {img:'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=200&h=150&fit=crop',n:'咖啡厅内'}
+  ],
+  objects:[
+    {img:'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=200&h=150&fit=crop',n:'添加墨镜'},
+    {img:'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=200&h=150&fit=crop',n:'去掉眼镜'},
+    {img:'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200&h=150&fit=crop',n:'加一只猫'},
+    {img:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=200&h=150&fit=crop',n:'手持咖啡杯'},
+    {img:'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=200&h=150&fit=crop',n:'移除杂物'},
+    {img:'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=200&h=150&fit=crop',n:'添加耳环'}
+  ]
+};
+
+/* === Video source === */
+function switchSrc(t,el){
+  document.querySelectorAll('.src-btn').forEach(b=>b.classList.remove('on'));el.classList.add('on');
+  document.getElementById('ovUpload').classList.toggle('hidden',t!=='upload');
+  document.getElementById('ovStream').classList.toggle('hidden',t!=='stream');
+  document.getElementById('ovCall').classList.toggle('hidden',t!=='call');
+}
+function onUpload(e){
+  var f=e.target.files[0];if(!f)return;
+  var u=URL.createObjectURL(f),v=document.getElementById('camVid');
+  v.src=u;v.classList.remove('hidden');v.play();hideOvs();
+  document.getElementById('camPH').classList.add('hidden');
+  var ev=document.getElementById('edVid');ev.src=u;ev.classList.remove('hidden');ev.play();
+  document.getElementById('edPH').classList.add('hidden');
+}
+function doStream(){
+  var u=document.getElementById('streamUrl').value;if(!u)return;hideOvs();
+  var ph=document.getElementById('camPH');ph.classList.remove('hidden');
+  ph.innerHTML='<i class="fas fa-signal" style="animation:pulse 1.5s infinite"></i><p style="color:#22C55E">直播流已接入</p>';
+  document.getElementById('camVid').classList.add('hidden');
+}
+function doCall(){
+  hideOvs();document.getElementById('camPH').classList.add('hidden');
+  navigator.mediaDevices.getUserMedia({video:true}).then(s=>{
+    var v=document.getElementById('camVid');v.srcObject=s;v.classList.remove('hidden');v.play();
+  }).catch(()=>{
+    var ph=document.getElementById('camPH');ph.classList.remove('hidden');
+    ph.innerHTML='<i class="fas fa-video-slash"></i><p>摄像头权限被拒绝</p>';
+  });
+}
+function hideOvs(){['ovUpload','ovStream','ovCall'].forEach(id=>document.getElementById(id).classList.add('hidden'))}
+
+/* === Image slot in input === */
+var slotImgData=null;
+function onSlotImg(e){
+  var f=e.target.files[0];if(!f)return;
+  var r=new FileReader();r.onload=ev=>{setSlotImg(ev.target.result)};r.readAsDataURL(f);e.target.value='';
+}
+function setSlotImg(src){
+  slotImgData=src;
+  document.getElementById('slotImg').src=src;
+  document.getElementById('imgSlot').classList.add('has-img');
+}
+function rmSlotImg(){
+  slotImgData=null;
+  document.getElementById('slotImg').src='';
+  document.getElementById('imgSlot').classList.remove('has-img');
+}
+
+/* === Panels === */
+function toggleScene(t,el){
+  var p=document.getElementById('p_'+t),open=p.classList.contains('show');
+  document.querySelectorAll('.exp-panel').forEach(x=>x.classList.remove('show'));
+  document.querySelectorAll('.s-tag').forEach(x=>x.classList.remove('on'));
+  if(!open){p.classList.add('show');el.classList.add('on')}
+}
+function closeP(t){
+  document.getElementById('p_'+t).classList.remove('show');
+  document.querySelectorAll('.s-tag').forEach(x=>x.classList.remove('on'));
+}
+document.addEventListener('mousedown',function(e){
+  if(!document.querySelector('.exp-panel.show'))return;
+  if(e.target.closest('.exp-panel')||e.target.closest('.s-tag'))return;
+  document.querySelectorAll('.exp-panel').forEach(x=>x.classList.remove('show'));
+  document.querySelectorAll('.s-tag').forEach(x=>x.classList.remove('on'));
+});
+
+/* === Render card grids === */
+function renderCards(gridId, items, prefix){
+  var h='';items.forEach((p,i)=>{
+    h+='<div class="card-item" onclick="pickCard(\''+gridId+'\','+i+',this)"><div class="card-img"><img src="'+p.img+'"></div><div class="card-label">'+p.n+'</div></div>';
+  });
+  document.getElementById(gridId).innerHTML=h;
+}
+function pickCard(gridId,idx,el){
+  document.getElementById(gridId).querySelectorAll('.card-item').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');
+  var item;
+  if(gridId==='prodGrid') item=DATA.change_clothes[curCat][idx];
+  else if(gridId==='styleGrid') item=DATA.style[idx];
+  else if(gridId==='bgGrid') item=DATA.background[idx];
+  else item=DATA.objects[idx];
+  var prefixMap={prodGrid:'换装：',styleGrid:'风格转换：',bgGrid:'背景替换：',objGrid:''};
+  document.getElementById('chatIn').value=(prefixMap[gridId]||'')+item.n;
+  setSlotImg(item.img);
+  document.getElementById('chatIn').focus();
+}
+
+/* Clothing with sub-tabs */
+var curCat=0;
+function switchCat(i,el){curCat=i;document.querySelectorAll('.cat-btn').forEach(x=>x.classList.remove('on'));el.classList.add('on');renderCards('prodGrid',DATA.change_clothes[curCat],'换装：')}
+renderCards('prodGrid',DATA.change_clothes[0],'换装：');
+renderCards('styleGrid',DATA.style,'风格转换：');
+renderCards('bgGrid',DATA.background,'背景替换：');
+renderCards('objGrid',DATA.objects,'');
+
+/* === History === */
+var hist=[];
+function renderHist(){
+  var el=document.getElementById('history'),list=document.getElementById('histList');
+  if(!hist.length){list.innerHTML='<div class="h-empty"><i class="fas fa-clock-rotate-left"></i>发送的指令会出现在这里</div>';return}
+  list.innerHTML=hist.map((h,i)=>{
+    var thumbHtml=h.img?'<img class="h-thumb" src="'+h.img+'" onclick="event.stopPropagation();togglePreview('+i+')">':'';
+    return '<div class="h-item"><span class="h-dot"></span>'+thumbHtml+'<span class="h-text">'+h.text+'</span><span class="h-badge">Done</span><div class="h-preview" id="hp_'+i+'"><img src="'+(h.img||'')+'"></div></div>';
+  }).join('');
+  el.scrollTop=el.scrollHeight;
+}
+function togglePreview(i){
+  var pv=document.getElementById('hp_'+i);
+  var open=pv.classList.contains('show');
+  document.querySelectorAll('.h-preview').forEach(x=>x.classList.remove('show'));
+  if(!open)pv.classList.add('show');
+}
+document.addEventListener('mousedown',function(e){
+  if(!e.target.closest('.h-preview')&&!e.target.closest('.h-thumb'))
+    document.querySelectorAll('.h-preview').forEach(x=>x.classList.remove('show'));
+});
+
+/* === Spark === */
+var PROMPTS={
+  general:['把眼镜换成墨镜','把背景换成夕阳海滩','应用浮世绘动画风格','让画面变成黑白胶片','把头发换成银白色','添加下雪特效','把衣服换成西装','应用水墨画风格','换成复古波普风格','给我加一副墨镜','去掉背景杂物','加一只猫在旁边'],
+  change_clothes:['换成白色T恤','穿上牛仔夹克','换成格纹衬衫','穿上连帽卫衣','换成黑色西装外套'],
+  style:['应用赛博朋克风格','转换成二次元动漫画风','切换为废土风格','变成日系治愈色调','应用水墨国风','转换成胶片复古质感'],
+  background:['背景替换为夕阳海滩','换成雪山森林背景','背景改为城市夜景','切换到日式庭院','背景变成宇宙星空'],
+  objects:['给我加一副墨镜','去掉画面中的眼镜','旁边加一只橘猫','手上加一杯咖啡','移除背景杂物','添加耳环']
+};
+function doSpark(){
+  var btn=document.getElementById('sparkBtn');btn.classList.remove('sparkling');void btn.offsetHeight;btn.classList.add('sparkling');
+  setTimeout(()=>btn.classList.remove('sparkling'),450);
+  var sc=document.querySelector('.s-tag.on'),key='general';
+  if(sc){var m={'换装试穿':'change_clothes','风格转换':'style','背景替换':'background','物体增删':'objects'};key=m[sc.textContent]||'general'}
+  var pool=PROMPTS[key];document.getElementById('chatIn').value=pool[Math.floor(Math.random()*pool.length)];document.getElementById('chatIn').focus();
+}
+
+/* === Send === */
+function send(){
+  var inp=document.getElementById('chatIn'),v=inp.value.trim();
+  if(!v&&!slotImgData)return;
+  hist.push({text:v||'[图片指令]',img:slotImgData||null});
+  renderHist();inp.value='';rmSlotImg();
+}
+document.getElementById('chatIn').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();send()}});
+
+/* === Drag video === */
+document.getElementById('camBody').addEventListener('dragover',e=>e.preventDefault());
+document.getElementById('camBody').addEventListener('drop',e=>{e.preventDefault();var f=e.dataTransfer.files[0];if(f&&f.type.startsWith('video/'))onUpload({target:{files:[f]}})});
+
+/* === New session === */
+function newSession(){
+  document.getElementById('camVid').classList.add('hidden');document.getElementById('camVid').src='';document.getElementById('camVid').srcObject=null;
+  document.getElementById('edVid').classList.add('hidden');document.getElementById('edVid').src='';
+  document.getElementById('camPH').classList.remove('hidden');document.getElementById('camPH').innerHTML='<i class="fas fa-video-slash"></i><p>等待视频输入</p>';
+  document.getElementById('edPH').classList.remove('hidden');
+  document.getElementById('ovUpload').classList.remove('hidden');document.getElementById('ovStream').classList.add('hidden');document.getElementById('ovCall').classList.add('hidden');
+  document.querySelectorAll('.src-btn').forEach((b,i)=>b.classList.toggle('on',i===0));
+  document.getElementById('chatIn').value='';hist=[];renderHist();rmSlotImg();
+  document.querySelectorAll('.exp-panel').forEach(p=>p.classList.remove('show'));
+  document.querySelectorAll('.s-tag').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.card-item').forEach(t=>t.classList.remove('on'));
+}
+</script>
+</body>
+</html>
