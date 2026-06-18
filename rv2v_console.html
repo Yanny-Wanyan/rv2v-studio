@@ -51,7 +51,7 @@ body{
 .vp-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;display:flex;align-items:center;gap:6px}
 .vp-title .rec{width:5px;height:5px;border-radius:50%;background:#EF4444;animation:pulse 1.5s infinite}
 .source-sel{display:flex;align-items:center;gap:3px;height:100%}
-.src-btn{height:24px;min-height:24px;padding:0 8px;border-radius:5px;line-height:24px;font-size:10px;font-weight:500;color:var(--text3);border:none;background:transparent;cursor:pointer;transition:all .12s;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+.src-btn{height:24px;min-height:24px;padding:0 8px;border-radius:5px;line-height:24px;font-size:10px;font-weight:500;color:var(--text3);border:none;background:transparent;cursor:pointer;transition:all .12s;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;gap:4px}
 .src-btn:hover{color:var(--text2);background:rgba(255,255,255,.4)}
 .src-btn.on{color:var(--accent);background:var(--accent-light)}
 .vid-ctrls{display:flex;align-items:center;gap:4px;height:100%}
@@ -60,8 +60,8 @@ body{
 .ctrl-btn.warn{color:#B45309}
 .ctrl-btn.warn:hover{color:#92400E;background:rgba(251,191,36,.16)}
 .ctrl-btn[disabled]{opacity:.4;cursor:not-allowed;pointer-events:none}
-.video-body{aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#1a1c2e 0%,#16202e 40%,#1c1a28 100%);position:relative;overflow:hidden}
-.video-body video{width:100%;height:100%;object-fit:contain;position:absolute;inset:0}
+.video-body{aspect-ratio:16/9;position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#1a1c2e 0%,#16202e 40%,#1c1a28 100%);overflow:hidden}
+.video-body video{width:100%;height:100%;object-fit:contain;position:absolute;inset:0;z-index:2}
 .v-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,.2);animation:breathe 4s ease-in-out infinite}
 .v-placeholder i{font-size:24px}
 .v-placeholder p{font-size:10px}
@@ -72,12 +72,13 @@ body{
 .ov-inner p{font-size:10px;opacity:.7}
 .ov input[type=file]{display:none}
 .ov-stream{cursor:default}
-.ov-stream .sf{display:flex;gap:6px;width:320px}
+.ov-stream .sf{display:flex;gap:6px;width:320px;margin:0 auto}
 .ov-stream .sf input{flex:1;padding:8px 11px;border-radius:7px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-size:11px;font-family:inherit}
 .ov-stream .sf input::placeholder{color:rgba(255,255,255,.3)}
 .ov-stream .sf input:focus{outline:none;border-color:var(--accent)}
 .ov-stream .sf button{padding:8px 13px;border-radius:7px;border:none;background:var(--accent);color:#fff;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit}
 .ov-call{cursor:default}
+.ov-call>div{display:flex;flex-direction:column;align-items:center}
 .ov-call button{padding:10px 22px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;transition:all .15s}
 .ov-call button:hover{background:rgba(255,255,255,.1)}
 .ed-badge{position:absolute;top:8px;left:8px;padding:3px 8px;border-radius:5px;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);font-size:9px;color:rgba(255,255,255,.72);display:flex;align-items:center;gap:4px}
@@ -192,6 +193,22 @@ body{
 .alert-text{font-size:14px;color:var(--text);line-height:1.5}
 .alert-actions{margin-top:12px;display:flex;justify-content:flex-end}
 .alert-actions button{padding:7px 14px;border:none;border-radius:8px;background:var(--accent);color:#fff;font-size:12px;cursor:pointer}
+.call-note{display:none;margin-top:8px;padding:8px 14px;border-radius:8px;background:rgba(251,191,36,.1);border-left:3px solid #F59E0B;font-size:11px;color:#92400E;line-height:1.4;flex-shrink:0;align-items:center;gap:7px}
+.call-note.show{display:flex}
+.call-note i{font-size:12px;color:#D97706;flex-shrink:0}
+.ov-call-tip{margin-top:14px;font-size:10px;color:rgba(255,255,255,.55);line-height:1.4;text-align:center}
+.video-vol{position:absolute;right:10px;bottom:10px;z-index:9;display:none;align-items:center;gap:0}
+.video-vol.show{display:flex}
+.vol-btn{width:28px;height:28px;border-radius:50%;border:none;background:rgba(15,23,42,.45);backdrop-filter:blur(6px);color:rgba(255,255,255,.8);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.vol-btn:hover{background:rgba(15,23,42,.65)}
+.vol-btn i{font-size:10px}
+.vol-slider{width:0;overflow:hidden;transition:width .2s ease,padding .2s ease,opacity .2s ease;opacity:0;display:flex;align-items:center;padding:0;background:rgba(15,23,42,.45);backdrop-filter:blur(6px);border-radius:14px;margin-right:4px;height:28px}
+.vol-slider.open{width:80px;padding:0 10px;opacity:1}
+.vol-slider input[type=range]{width:100%;height:3px;accent-color:#60A5FA;cursor:pointer}
+.toast-anchor{flex-shrink:0;display:flex;justify-content:center;height:0;position:relative;z-index:12}
+.mini-toast{position:absolute;bottom:4px;background:rgba(17,24,39,.92);color:#fff;border-radius:999px;padding:8px 14px;font-size:12px;line-height:1;display:none;align-items:center;gap:7px;box-shadow:0 8px 24px rgba(0,0,0,.22);max-width:420px;white-space:nowrap}
+.mini-toast.show{display:flex;animation:fadeIn .18s ease}
+.mini-toast i{color:#FCA5A5}
 @media(max-width:900px){.video-section{grid-template-columns:1fr}.main{padding:10px}}
 </style>
 </head>
@@ -215,7 +232,7 @@ body{
         <div class="source-sel">
           <button class="src-btn on" onclick="switchSrc('upload',this)"><i class="fas fa-upload"></i> 上传</button>
           <button class="src-btn" onclick="switchSrc('stream',this)"><i class="fas fa-signal"></i> 直播流</button>
-          <button class="src-btn" onclick="switchSrc('call',this)"><i class="fas fa-video"></i> 通话</button>
+          <button class="src-btn" onclick="switchSrc('call',this)"><i class="fas fa-camera"></i> 摄像头</button>
         </div>
         <div class="vid-ctrls">
           <button class="ctrl-btn" id="pauseBtn" onclick="togglePause()"><i class="fas fa-pause"></i> 暂停</button>
@@ -229,9 +246,10 @@ body{
           <input type="file" id="fileIn" accept="video/*" onchange="onUpload(event)">
         </div>
         <div class="ov ov-stream hidden" id="ovStream"><div class="sf"><input type="text" id="streamUrl" placeholder="rtmp://stream.example.com/live/key"><button onclick="doStream()">连接</button></div></div>
-        <div class="ov ov-call hidden" id="ovCall"><button onclick="doCall()"><i class="fas fa-phone"></i>发起视频通话</button></div>
+        <div class="ov ov-call hidden" id="ovCall"><div><button onclick="doCall()"><i class="fas fa-camera"></i>开启摄像头</button><div class="ov-call-tip">仅采集画面，不支持语音；指令请使用文字输入</div></div></div>
         <video id="camVid" class="hidden" loop muted playsinline></video>
         <div class="v-placeholder" id="camPH"><i class="fas fa-video-slash"></i><p>等待视频输入</p></div>
+        <div class="video-vol" id="volDock"><div class="vol-slider" id="volSlider"><input type="range" id="volRange" min="0" max="100" value="60" oninput="setCamVolume(this.value)"></div><button class="vol-btn" onclick="toggleVol()"><i class="fas fa-volume-up" id="volIcon"></i></button></div>
       </div>
     </div>
     <div class="video-panel">
@@ -246,6 +264,8 @@ body{
       </div>
     </div>
   </div>
+  <div class="call-note" id="callNote"><i class="fas fa-camera"></i><span>摄像头模式：仅采集画面，指令请使用文字输入</span></div>
+  <div class="toast-anchor"><div class="mini-toast" id="miniToast"><i class="fas fa-circle-exclamation"></i><span id="miniToastText">提示</span></div></div>
 
   <div class="command-bar">
     <div class="cmd-history" id="history"><div id="histList"><div class="h-empty"><i class="fas fa-clock-rotate-left"></i>发送的指令会出现在这里</div></div></div>
@@ -319,16 +339,32 @@ function switchSrc(t,el){
   document.getElementById('ovUpload').classList.toggle('hidden',t!=='upload');
   document.getElementById('ovStream').classList.toggle('hidden',t!=='stream');
   document.getElementById('ovCall').classList.toggle('hidden',t!=='call');
+  document.getElementById('volDock').classList.remove('show');
+}
+function setCamVolume(v){
+  var vol=Math.max(0,Math.min(100,Number(v||0)))/100;
+  var cv=document.getElementById('camVid');
+  var ev=document.getElementById('edVid');
+  cv.muted=false;ev.muted=false;
+  cv.volume=vol;ev.volume=vol;
+  document.getElementById('volIcon').className=vol===0?'fas fa-volume-xmark':'fas fa-volume-up';
+}
+function toggleVol(){
+  document.getElementById('volSlider').classList.toggle('open');
 }
 function onUpload(e){
   var f=e.target.files[0];if(!f)return;
   if(f.type && !f.type.startsWith('video/')){showAlert('仅支持视频文件上传');return}
-  var u=URL.createObjectURL(f),v=document.getElementById('camVid');
+  var u=URL.createObjectURL(f);
+  var probeUrl=URL.createObjectURL(f);
+  var v=document.getElementById('camVid');
   var probe=document.createElement('video');
   probe.preload='metadata';
-  probe.onloadedmetadata=function(){
+  var handled=false;
+  function proceed(){
+    if(handled)return;handled=true;
     var d=probe.duration||0;
-    URL.revokeObjectURL(probe.src);
+    URL.revokeObjectURL(probeUrl);
     if(d>300){
       URL.revokeObjectURL(u);
       showAlert('上传失败，视频最长5分钟');
@@ -340,9 +376,14 @@ function onUpload(e){
     var ev=document.getElementById('edVid');ev.src=u;ev.classList.remove('hidden');ev.play();
     document.getElementById('edPH').classList.add('hidden');
     window.activeInput='upload';setPauseUi(false);updateControlState();
-  };
-  probe.onerror=function(){URL.revokeObjectURL(u);showAlert('上传失败，请重试');};
-  probe.src=u;
+    document.getElementById('callNote').classList.remove('show');
+    document.getElementById('volDock').classList.add('show');
+    setCamVolume(document.getElementById('volRange').value);
+  }
+  probe.onloadedmetadata=proceed;
+  probe.onerror=function(){URL.revokeObjectURL(probeUrl);URL.revokeObjectURL(u);showAlert('上传失败，请重试');};
+  probe.src=probeUrl;
+  setTimeout(function(){if(!handled)proceed()},2000);
 }
 function beginRealtimeSession(){
   window.sessionStartAt=Date.now();
@@ -369,6 +410,9 @@ function doStream(){
   document.getElementById('camVid').classList.add('hidden');
   document.getElementById('edVid').classList.add('hidden');
   document.getElementById('edPH').classList.remove('hidden');
+  document.getElementById('callNote').classList.remove('show');
+  document.getElementById('volDock').classList.add('show');
+  setCamVolume(document.getElementById('volRange').value);
   beginRealtimeSession();
   window.activeInput='stream';setPauseUi(false);updateControlState();
 }
@@ -378,6 +422,8 @@ function doCall(){
     if(window.camStream){window.camStream.getTracks().forEach(t=>t.stop())}
     window.camStream=s;
     var v=document.getElementById('camVid');v.srcObject=s;v.classList.remove('hidden');v.play();
+    document.getElementById('callNote').classList.add('show');
+    document.getElementById('volDock').classList.remove('show');
     beginRealtimeSession();
     window.activeInput='call';setPauseUi(false);updateControlState();
   }).catch(()=>{
@@ -428,6 +474,8 @@ function stopSession(){
   document.getElementById('ovStream').classList.add('hidden');
   document.getElementById('ovCall').classList.add('hidden');
   document.querySelectorAll('.src-btn').forEach((b,i)=>b.classList.toggle('on',i===0));
+  document.getElementById('callNote').classList.remove('show');
+  document.getElementById('volDock').classList.remove('show');
   endRealtimeSession();
   window.activeInput='none';setPauseUi(false);
   updateControlState();
@@ -555,6 +603,9 @@ function togglePreview(i){
 document.addEventListener('mousedown',function(e){
   if(!e.target.closest('.h-preview')&&!e.target.closest('.h-thumb'))
     document.querySelectorAll('.h-preview').forEach(x=>x.classList.remove('show'));
+  if(!e.target.closest('.video-vol')){
+    var s=document.getElementById('volSlider');if(s)s.classList.remove('open');
+  }
 });
 
 /* === Spark === */
@@ -574,11 +625,18 @@ function doSpark(){
 }
 
 function showAlert(msg){
-  document.getElementById('alertText').textContent=msg;
-  document.getElementById('alertMask').classList.add('show');
+  showMiniToast(msg);
 }
 function closeAlert(){document.getElementById('alertMask').classList.remove('show')}
 function showServerBusyAlert(){showAlert('服务器繁忙，请稍后再试')}
+var miniToastTimer=null;
+function showMiniToast(msg){
+  var el=document.getElementById('miniToast');
+  document.getElementById('miniToastText').textContent=msg;
+  el.classList.add('show');
+  if(miniToastTimer)clearTimeout(miniToastTimer);
+  miniToastTimer=setTimeout(function(){el.classList.remove('show');miniToastTimer=null;},2500);
+}
 
 /* === Send === */
 var renderTimer=null;
