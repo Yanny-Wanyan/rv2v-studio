@@ -48,7 +48,7 @@ body{
 .video-section{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:auto 0;align-items:start}
 .video-panel{background:rgba(255,255,255,.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
 .video-panel-header{height:40px;min-height:40px;max-height:40px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0;background:rgba(255,255,255,.3);box-sizing:border-box;overflow:hidden}
-.vp-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;display:flex;align-items:center;gap:6px}
+.vp-title{font-size:11px;font-weight:700;color:var(--text);letter-spacing:0;display:flex;align-items:center;gap:6px}
 .vp-title .rec{width:5px;height:5px;border-radius:50%;background:#EF4444;animation:pulse 1.5s infinite}
 .source-sel{display:flex;align-items:center;gap:3px;height:100%}
 .src-btn{height:24px;min-height:24px;padding:0 8px;border-radius:5px;line-height:24px;font-size:10px;font-weight:500;color:var(--text3);border:none;background:transparent;cursor:pointer;transition:all .12s;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;gap:4px}
@@ -215,7 +215,7 @@ body{
 <body>
 
 <div class="header">
-  <div class="brand"><span class="dot"></span>JoyAI-Video-Edit</div>
+  <div class="brand"><span class="dot"></span>JoyAI-Video-Edit<span style="font-weight:400;font-size:12px;color:var(--text3);margin-left:6px">流式视频编辑体验</span></div>
   <button class="icon-btn" data-tip="新建会话" onclick="newSession()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
       <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
@@ -228,7 +228,7 @@ body{
   <div class="video-section">
     <div class="video-panel">
       <div class="video-panel-header">
-        <div class="vp-title"><span class="rec"></span>CAMERA FEED</div>
+        <div class="vp-title"></span>原始画面</div>
         <div class="source-sel">
           <button class="src-btn on" onclick="switchSrc('upload',this)"><i class="fas fa-upload"></i> 上传</button>
           <button class="src-btn" onclick="switchSrc('stream',this)"><i class="fas fa-signal"></i> 直播流</button>
@@ -254,8 +254,8 @@ body{
     </div>
     <div class="video-panel">
       <div class="video-panel-header">
-        <div class="vp-title">EDITED STREAM</div>
-        <div style="font-size:9px;color:var(--text3)">实时输出</div>
+        <div class="vp-title">编辑结果</div>
+        
       </div>
       <div class="video-body">
         <div class="ed-badge" id="renderBadge"><i></i><span id="renderText">待机</span></div>
