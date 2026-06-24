@@ -359,6 +359,23 @@ var DATA={
 /* === Video source === */
 function switchSrc(t,el){
   document.querySelectorAll('.src-btn').forEach(b=>b.classList.remove('on'));el.classList.add('on');
+  // If video is playing, reset both sides
+  var v=document.getElementById('camVid');
+  var ev=document.getElementById('edVid');
+  if(window.activeInput&&window.activeInput!=='none'){
+    if(window.camStream){window.camStream.getTracks().forEach(tr=>tr.stop());window.camStream=null}
+    if(v.src){URL.revokeObjectURL(v.src)}
+    v.pause();v.classList.add('hidden');v.src='';v.srcObject=null;
+    ev.pause();ev.classList.add('hidden');ev.src='';
+    document.getElementById('camPH').classList.remove('hidden');
+    document.getElementById('camPH').innerHTML='<i class="fas fa-video-slash"></i><p>等待视频输入</p>';
+    document.getElementById('edPH').classList.remove('hidden');
+    document.getElementById('volDock').classList.remove('show');
+    document.getElementById('callNote').classList.remove('show');
+    endRealtimeSession();
+    window.activeInput='none';setPauseUi(false);
+    updateControlState();
+  }
   document.getElementById('ovUpload').classList.toggle('hidden',t!=='upload');
   document.getElementById('ovStream').classList.toggle('hidden',t!=='stream');
   document.getElementById('ovCall').classList.toggle('hidden',t!=='call');
