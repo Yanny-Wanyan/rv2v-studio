@@ -48,7 +48,11 @@ body{
 .video-section{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:auto 0;align-items:start}
 .video-panel{background:rgba(255,255,255,.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
 .video-panel-header{height:40px;min-height:40px;max-height:40px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0;background:rgba(255,255,255,.3);box-sizing:border-box;overflow:hidden}
-.vp-title{font-size:11px;font-weight:700;color:var(--text);letter-spacing:0;display:flex;align-items:center;gap:6px}
+.vp-title{font-size:11px;font-weight:600;color:#475569;letter-spacing:.2px;display:inline-flex;align-items:center;gap:7px;padding:0;background:transparent;border:none;box-shadow:none;transition:color .15s,opacity .15s;opacity:.9}
+.vp-title:hover{color:#334155;opacity:1}
+.vp-title i{font-size:11px;color:#94A3B8}
+.vp-title.source i{color:#60A5FA}
+.vp-title.output i{color:#A78BFA}
 .vp-title .rec{width:5px;height:5px;border-radius:50%;background:#EF4444;animation:pulse 1.5s infinite}
 .source-sel{display:flex;align-items:center;gap:3px;height:100%}
 .src-btn{height:24px;min-height:24px;padding:0 8px;border-radius:5px;line-height:24px;font-size:10px;font-weight:500;color:var(--text3);border:none;background:transparent;cursor:pointer;transition:all .12s;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;gap:4px}
@@ -62,9 +66,9 @@ body{
 .ctrl-btn[disabled]{opacity:.4;cursor:not-allowed;pointer-events:none}
 .video-body{aspect-ratio:16/9;position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#1a1c2e 0%,#16202e 40%,#1c1a28 100%);overflow:hidden}
 .video-body video{width:100%;height:100%;object-fit:contain;position:absolute;inset:0;z-index:2}
-.v-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,.2);animation:breathe 4s ease-in-out infinite}
+.v-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,.6);animation:breathe 4s ease-in-out infinite}
 .v-placeholder i{font-size:24px}
-.v-placeholder p{font-size:10px}
+.v-placeholder p{font-size:10px;opacity:.7}
 .ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);z-index:5;cursor:pointer;transition:background .2s}
 .ov:hover{background:rgba(0,0,0,.5)}
 .ov-inner{text-align:center;color:rgba(255,255,255,.6)}
@@ -81,6 +85,23 @@ body{
 .ov-call>div{display:flex;flex-direction:column;align-items:center}
 .ov-call button{padding:10px 22px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;transition:all .15s}
 .ov-call button:hover{background:rgba(255,255,255,.1)}
+.rec-btn{height:24px;min-height:24px;padding:0 8px;border-radius:5px;line-height:24px;font-size:10px;font-weight:500;color:var(--text3);border:none;background:transparent;cursor:pointer;transition:all .15s;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;gap:4px;position:relative}
+.rec-btn:hover{color:var(--text2);background:rgba(255,255,255,.4)}
+.rec-btn[disabled]{opacity:.4;cursor:not-allowed;pointer-events:none}
+.rec-btn .rec-ico{width:12px;height:12px;flex-shrink:0}
+.rec-btn .rec-ico circle.ring{fill:none;stroke:var(--text3);stroke-width:1.5;transition:stroke .15s}
+.rec-btn .rec-ico circle.dot{fill:var(--text3);transition:fill .15s}
+.rec-btn.recording{color:#DC2626}
+.rec-btn.recording .rec-ico circle.ring{stroke:#DC2626}
+.rec-btn.recording .rec-ico circle.dot{fill:#DC2626;animation:pulse 1.2s infinite}
+.rec-btn.recording:hover{background:rgba(220,38,38,.08)}
+.global-tip{position:fixed;padding:3px 9px;border-radius:5px;background:#333;color:#fff;font-size:10px;white-space:nowrap;pointer-events:none;z-index:9999;opacity:0;transition:opacity .12s;transform:translateX(-50%)}
+.global-tip.show{opacity:1}
+.ed-mute{position:absolute;right:10px;bottom:10px;z-index:9;width:28px;height:28px;border-radius:50%;border:none;background:rgba(15,23,42,.45);backdrop-filter:blur(6px);color:rgba(255,255,255,.8);display:none;align-items:center;justify-content:center;cursor:default}
+.ed-mute.show{display:flex}
+.ed-mute i{font-size:10px}
+.ed-mute::after{content:attr(data-tip);position:absolute;top:-28px;left:50%;transform:translateX(-50%) scale(.92);padding:3px 9px;border-radius:5px;background:#333;color:#fff;font-size:10px;white-space:nowrap;opacity:0;pointer-events:none;transition:all .12s;z-index:10}
+.ed-mute:hover::after{opacity:1;transform:translateX(-50%) scale(1)}
 .ed-badge{position:absolute;top:8px;left:8px;padding:3px 8px;border-radius:5px;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);font-size:9px;color:rgba(255,255,255,.72);display:flex;align-items:center;gap:4px}
 .ed-badge i{width:4px;height:4px;border-radius:50%;background:#9CA3AF;display:inline-block}
 .ed-badge.rendering i{background:#3B82F6;animation:pulse 1.2s infinite}
@@ -228,7 +249,7 @@ body{
   <div class="video-section">
     <div class="video-panel">
       <div class="video-panel-header">
-        <div class="vp-title"></span>原始画面</div>
+        <div class="vp-title source"><i class="fa-solid fa-camera"></i>原始画面</div>
         <div class="source-sel">
           <button class="src-btn on" onclick="switchSrc('upload',this)"><i class="fas fa-upload"></i> 上传</button>
           <button class="src-btn" onclick="switchSrc('stream',this)"><i class="fas fa-signal"></i> 直播流</button>
@@ -247,19 +268,20 @@ body{
         </div>
         <div class="ov ov-stream hidden" id="ovStream"><div class="sf"><input type="text" id="streamUrl" placeholder="rtmp://stream.example.com/live/key"><button onclick="doStream()">连接</button></div></div>
         <div class="ov ov-call hidden" id="ovCall"><div><button onclick="doCall()"><i class="fas fa-camera"></i>开启摄像头</button><div class="ov-call-tip">仅采集画面，不支持语音；指令请使用文字输入</div></div></div>
-        <video id="camVid" class="hidden" loop muted playsinline></video>
+        <video id="camVid" class="hidden" muted playsinline></video>
         <div class="v-placeholder" id="camPH"><i class="fas fa-video-slash"></i><p>等待视频输入</p></div>
         <div class="video-vol" id="volDock"><div class="vol-slider" id="volSlider"><input type="range" id="volRange" min="0" max="100" value="60" oninput="setCamVolume(this.value)"></div><button class="vol-btn" onclick="toggleVol()"><i class="fas fa-volume-up" id="volIcon"></i></button></div>
       </div>
     </div>
     <div class="video-panel">
       <div class="video-panel-header">
-        <div class="vp-title">编辑结果</div>
-        
+        <div class="vp-title output"><i class="fa-solid fa-wand-magic-sparkles"></i>编辑结果</div>
+        <button class="rec-btn" id="recBtn" disabled data-tip="录制编辑片段" onclick="handleRecBtn()"><svg class="rec-ico" viewBox="0 0 12 12"><circle class="ring" cx="6" cy="6" r="5"/><circle class="dot" cx="6" cy="6" r="2.5"/></svg><span id="recLabel">录制</span></button>
       </div>
       <div class="video-body">
         <div class="ed-badge" id="renderBadge"><i></i><span id="renderText">待机</span></div>
-        <video id="edVid" class="hidden" loop muted playsinline></video>
+        <video id="edVid" class="hidden" muted playsinline></video>
+        <button class="ed-mute" id="edMute" data-tip="输出视频仅画面"><i class="fas fa-volume-xmark"></i></button>
         <div class="v-placeholder" id="edPH"><i class="fas fa-wand-magic-sparkles"></i><p>等待编辑指令</p></div>
       </div>
     </div>
@@ -310,6 +332,7 @@ body{
   </div>
 </div>
 
+<div class="global-tip" id="globalTip"></div>
 <div class="alert-mask" id="alertMask" onclick="if(event.target===this)closeAlert()">
   <div class="alert-box">
     <div class="alert-ico">!</div>
@@ -340,6 +363,8 @@ function switchSrc(t,el){
   document.getElementById('ovStream').classList.toggle('hidden',t!=='stream');
   document.getElementById('ovCall').classList.toggle('hidden',t!=='call');
   document.getElementById('volDock').classList.remove('show');
+  window.srcTab=t;
+  updateRecBtnState();
 }
 function setCamVolume(v){
   var vol=Math.max(0,Math.min(100,Number(v||0)))/100;
@@ -375,7 +400,7 @@ function onUpload(e){
     document.getElementById('camPH').classList.add('hidden');
     var ev=document.getElementById('edVid');ev.src=u;ev.classList.remove('hidden');ev.play();
     document.getElementById('edPH').classList.add('hidden');
-    window.activeInput='upload';setPauseUi(false);updateControlState();
+    window.activeInput='upload';setPauseUi(false);updateControlState();updateRecBtnState();
     document.getElementById('callNote').classList.remove('show');
     document.getElementById('volDock').classList.add('show');
     setCamVolume(document.getElementById('volRange').value);
@@ -414,7 +439,7 @@ function doStream(){
   document.getElementById('volDock').classList.add('show');
   setCamVolume(document.getElementById('volRange').value);
   beginRealtimeSession();
-  window.activeInput='stream';setPauseUi(false);updateControlState();
+  window.activeInput='stream';setPauseUi(false);updateControlState();updateRecBtnState();
 }
 function doCall(){
   hideOvs();document.getElementById('camPH').classList.add('hidden');
@@ -425,7 +450,7 @@ function doCall(){
     document.getElementById('callNote').classList.add('show');
     document.getElementById('volDock').classList.remove('show');
     beginRealtimeSession();
-    window.activeInput='call';setPauseUi(false);updateControlState();
+    window.activeInput='call';setPauseUi(false);updateControlState();updateRecBtnState();
   }).catch(()=>{
     var ph=document.getElementById('camPH');ph.classList.remove('hidden');
     ph.innerHTML='<i class="fas fa-video-slash"></i><p>摄像头权限被拒绝</p>';
@@ -478,7 +503,105 @@ function stopSession(){
   document.getElementById('volDock').classList.remove('show');
   endRealtimeSession();
   window.activeInput='none';setPauseUi(false);
-  updateControlState();
+  stopRec();updateControlState();updateRecBtnState();
+}
+
+/* === Record edited stream === */
+var recStream=null,recChunks=[],recTimer=null,recStart=0,recCanvas=null,recCtx=null,recRaf=null;
+function toggleRec(){
+  var btn=document.getElementById('recBtn');
+  if(btn.classList.contains('recording')){stopRec();return}
+  var ev=document.getElementById('edVid');
+  if(ev.classList.contains('hidden'))return;
+  recCanvas=document.createElement('canvas');
+  recCanvas.width=854;recCanvas.height=480;
+  recCtx=recCanvas.getContext('2d');
+  function drawFrame(){recCtx.drawImage(ev,0,0,854,480);recRaf=requestAnimationFrame(drawFrame)}
+  drawFrame();
+  var cStream=recCanvas.captureStream(30);
+  var opts={mimeType:'video/webm;codecs=vp9'};
+  if(!MediaRecorder.isTypeSupported(opts.mimeType))opts={mimeType:'video/webm'};
+  recStream=new MediaRecorder(cStream,opts);
+  recChunks=[];
+  recStream.ondataavailable=function(e){if(e.data.size>0)recChunks.push(e.data)};
+  recStream.onstop=function(){
+    cancelAnimationFrame(recRaf);recRaf=null;recCanvas=null;recCtx=null;
+    var blob=new Blob(recChunks,{type:'video/mp4'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='rv2v_edit_'+Date.now()+'.mp4';
+    a.click();
+    setTimeout(function(){URL.revokeObjectURL(a.href)},1000);
+  };
+  recStream.start();
+  recStart=Date.now();
+  btn.classList.add('recording');
+  btn.setAttribute('data-tip','点击停止并下载');
+  document.getElementById('recLabel').textContent='0:00';
+  recTimer=setInterval(updateRecTime,1000);
+}
+function stopRec(){
+  if(recStream&&recStream.state==='recording')recStream.stop();
+  recStream=null;
+  if(recRaf){cancelAnimationFrame(recRaf);recRaf=null}
+  recCanvas=null;recCtx=null;
+  clearInterval(recTimer);recTimer=null;
+  var btn=document.getElementById('recBtn');
+  btn.classList.remove('recording');
+  updateRecBtnState();
+}
+function updateRecTime(){
+  var s=Math.floor((Date.now()-recStart)/1000);
+  var m=Math.floor(s/60);s=s%60;
+  document.getElementById('recLabel').textContent=m+':'+(s<10?'0':'')+s;
+}
+function updateRecBtnState(){
+  var ev=document.getElementById('edVid');
+  var hidden=ev.classList.contains('hidden');
+  var btn=document.getElementById('recBtn');
+  document.getElementById('edMute').classList.toggle('show',!hidden);
+  var isUpload=(window.srcTab||'upload')==='upload';
+  if(isUpload){
+    btn.innerHTML='<i class="fas fa-download" style="font-size:10px"></i><span id="recLabel">下载</span>';
+    btn.setAttribute('data-tip','下载编辑结果');
+    var done=document.getElementById('renderBadge')&&document.getElementById('renderBadge').classList.contains('done');
+    btn.disabled=hidden||!done;
+  }else{
+    btn.innerHTML='<svg class="rec-ico" viewBox="0 0 12 12"><circle class="ring" cx="6" cy="6" r="5"/><circle class="dot" cx="6" cy="6" r="2.5"/></svg><span id="recLabel">录制</span>';
+    btn.setAttribute('data-tip','录制编辑片段');
+    btn.disabled=hidden;
+  }
+}
+function handleRecBtn(){
+  if((window.srcTab||'upload')==='upload'){downloadEdit()}else{toggleRec()}
+}
+function downloadEdit(){
+  var ev=document.getElementById('edVid');
+  if(ev.classList.contains('hidden')||!ev.src)return;
+  var canvas=document.createElement('canvas');
+  canvas.width=854;canvas.height=480;
+  var ctx=canvas.getContext('2d');
+  var stream=canvas.captureStream(30);
+  var opts={mimeType:'video/webm;codecs=vp9'};
+  if(!MediaRecorder.isTypeSupported(opts.mimeType))opts={mimeType:'video/webm'};
+  var mr=new MediaRecorder(stream,opts);
+  var chunks=[];
+  mr.ondataavailable=function(e){if(e.data.size>0)chunks.push(e.data)};
+  mr.onstop=function(){
+    var blob=new Blob(chunks,{type:'video/mp4'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='rv2v_edit_'+Date.now()+'.mp4';
+    a.click();
+    setTimeout(function(){URL.revokeObjectURL(a.href)},1000);
+  };
+  var clone=ev.cloneNode(true);
+  clone.muted=true;clone.currentTime=0;clone.play();
+  mr.start();
+  function draw(){ctx.drawImage(clone,0,0,854,480);if(!clone.ended)requestAnimationFrame(draw);else mr.stop()}
+  clone.addEventListener('seeked',function(){clone.play()});
+  clone.addEventListener('playing',function(){draw()});
+  clone.addEventListener('ended',function(){mr.stop()});
 }
 
 /* === Image slot in input === */
@@ -646,9 +769,9 @@ function setRenderState(state){
   if(!badge||!text)return;
   badge.classList.remove('rendering','done','error');
   if(state==='idle'){text.textContent='待机';return}
-  if(state==='rendering'){badge.classList.add('rendering');text.textContent='渲染中';return}
-  if(state==='done'){badge.classList.add('done');text.textContent='已完成';return}
-  if(state==='error'){badge.classList.add('error');text.textContent='失败';return}
+  if(state==='rendering'){badge.classList.add('rendering');text.textContent='渲染中';updateRecBtnState();return}
+  if(state==='done'){badge.classList.add('done');text.textContent='已完成';updateRecBtnState();return}
+  if(state==='error'){badge.classList.add('error');text.textContent='失败';updateRecBtnState();return}
 }
 function send(){
   var inp=document.getElementById('chatIn'),v=inp.value.trim();
@@ -681,8 +804,25 @@ function newSession(){
   document.querySelectorAll('.card-item').forEach(t=>t.classList.remove('on'));
 }
 window.activeInput='none';
-updateControlState();
+window.srcTab='upload';
+updateControlState();updateRecBtnState();
 setRenderState('idle');
+
+/* === Global tooltip for clipped elements === */
+(function(){
+  var tip=document.getElementById('globalTip');
+  document.querySelectorAll('[data-tip]').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      if(el.disabled)return;
+      tip.textContent=el.getAttribute('data-tip');
+      var r=el.getBoundingClientRect();
+      tip.style.left=r.left+r.width/2+'px';
+      tip.style.top=r.top-28+'px';
+      tip.classList.add('show');
+    });
+    el.addEventListener('mouseleave',function(){tip.classList.remove('show')});
+  });
+})();
 </script>
 </body>
 </html>
