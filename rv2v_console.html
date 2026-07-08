@@ -312,15 +312,15 @@ body{
     </div>
     <div class="exp-panel" id="p_change_clothes">
       <div class="exp-hd"><div class="exp-title">实时换装</div><span class="exp-note">请确保画面中有清晰的人物主体</span><button class="exp-close" onclick="closeP('change_clothes')"><i class="fas fa-times"></i></button></div>
-      <div class="opt-row"><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">白T恤</button><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">牛仔夹克</button><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">黑色西装</button><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">碎花长裙</button><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">皮夹克</button><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">连帽卫衣</button></div>
+      <div class="opt-row"><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">白T恤</button><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">牛仔夹克</button><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">黑色西装</button><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">碎花连衣裙</button><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">皮夹克</button><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">灰色卫衣</button></div>
     </div>
     <div class="exp-panel" id="p_style">
-      <div class="exp-hd"><div class="exp-title">风格变身</div><button class="exp-close" onclick="closeP('style')"><i class="fas fa-times"></i></button></div>
+      <div class="exp-hd"><div class="exp-title">风格演绎</div><button class="exp-close" onclick="closeP('style')"><i class="fas fa-times"></i></button></div>
       <div class="opt-row"><button class="opt-tag" onclick="pickOpt(this,'style')">日系动漫</button><button class="opt-tag" onclick="pickOpt(this,'style')">水墨国风</button><button class="opt-tag" onclick="pickOpt(this,'style')">赛博朋克</button><button class="opt-tag" onclick="pickOpt(this,'style')">油画质感</button><button class="opt-tag" onclick="pickOpt(this,'style')">胶片复古</button><button class="opt-tag" onclick="pickOpt(this,'style')">像素游戏</button></div>
     </div>
     <div class="exp-panel" id="p_scene">
       <div class="exp-hd"><div class="exp-title">场景切换</div><button class="exp-close" onclick="closeP('scene')"><i class="fas fa-times"></i></button></div>
-      <div class="opt-row"><button class="opt-tag" onclick="pickOpt(this,'scene')">户外草地</button><button class="opt-tag" onclick="pickOpt(this,'scene')">咖啡厅</button><button class="opt-tag" onclick="pickOpt(this,'scene')">海边日落</button><button class="opt-tag" onclick="pickOpt(this,'scene')">城市街道</button><button class="opt-tag" onclick="pickOpt(this,'scene')">图书馆</button><button class="opt-tag" onclick="pickOpt(this,'scene')">演唱会现场</button></div>
+      <div class="opt-row"><button class="opt-tag" onclick="pickOpt(this,'scene')">户外草地</button><button class="opt-tag" onclick="pickOpt(this,'scene')">咖啡厅</button><button class="opt-tag" onclick="pickOpt(this,'scene')">海边日落</button><button class="opt-tag" onclick="pickOpt(this,'scene')">城市街道</button><button class="opt-tag" onclick="pickOpt(this,'scene')">图书馆</button></div>
     </div>
     <div class="exp-panel" id="p_local_edit">
       <div class="exp-hd"><div class="exp-title">局部魔改</div><span class="exp-note">请确保指令与当前画面内容匹配</span><button class="exp-close" onclick="closeP('local_edit')"><i class="fas fa-times"></i></button></div>
@@ -644,36 +644,35 @@ document.addEventListener('mousedown',function(e){
 /* Text option tags — descriptive prompts */
 var OPT_PROMPTS={
   change_clothes:{
-    '白T恤':'将上衣替换成白色圆领T恤，自然贴合身体轮廓',
-    '牛仔夹克':'将外套换成经典蓝色牛仔夹克，保持原有姿态',
-    '黑色西装':'将衣服替换成修身黑色西装，整体剪裁协调',
-    '碎花长裙':'将下装变成碎花长裙，裙摆随动作自然摆动',
-    '皮夹克':'将上衣换成黑色皮夹克，皮质光泽自然反光',
-    '连帽卫衣':'将上衣替换成灰色连帽卫衣，面料质感柔软自然'
+    '白T恤':'换上白色圆领T恤',
+    '牛仔夹克':'换上蓝色牛仔夹克，敞开穿',
+    '黑色西装':'换上黑色西装，白衬衫打底',
+    '碎花连衣裙':'换上碎花连衣裙，裙摆随动作飘动',
+    '皮夹克':'换上黑色皮夹克，拉链半开',
+    '灰色卫衣':'换上灰色连帽卫衣，宽松版型'
   },
   style:{
-    '日系动漫':'将画面转为日系动漫风格，线条清晰色彩明亮',
-    '水墨国风':'将画面变成水墨国风，笔触晕染留白自然',
-    '赛博朋克':'将画面转为赛博朋克风，添加霓虹光效和暗色调',
-    '油画质感':'将画面变成油画风格，保留厚重笔触和色彩层次',
-    '胶片复古':'将画面转为胶片复古质感，加颗粒感和褪色色调',
-    '像素游戏':'将画面转为像素游戏风格，保持轮廓可辨识'
+    '日系动漫':'画面转为日系动漫风，线条清晰色彩鲜艳',
+    '水墨国风':'画面变成黑白水墨画风格，留白大量',
+    '赛博朋克':'画面转为赛博朋克风，霓虹灯光暗色调',
+    '油画质感':'画面变成油画风格，厚重色彩笔触感',
+    '胶片复古':'画面加胶片效果，颗粒感和褪色暖调',
+    '像素游戏':'画面变成像素风，8-bit复古游戏画面'
   },
   scene:{
-    '户外草地':'将背景替换成阳光明媚的户外草地，光影自然协调',
-    '咖啡厅':'将背景换成温馨咖啡厅内景，暖色灯光氛围',
-    '海边日落':'将背景替换成海边日落场景，金色光线洒在人物上',
-    '城市街道':'将背景换成繁华城市街道，景深和透视自然',
-    '图书馆':'将背景替换成安静的图书馆，书架整齐光线柔和',
-    '演唱会现场':'将背景换成演唱会现场，舞台灯光和人群氛围感'
+    '户外草地':'背景换为阳光下的户外草地',
+    '咖啡厅':'背景换为咖啡厅内，暖黄灯光',
+    '海边日落':'背景换为海边日落，沙滩海浪橙红天空',
+    '城市街道':'背景换为城市街道，车流和高楼',
+    '图书馆':'背景换为图书馆，书架排列光线柔和'
   },
   local_edit:{
-    '换发色银白':'将头发颜色变成银白色，发丝光泽自然过渡',
-    '戴上墨镜':'给人物戴上黑色墨镜，镜片反光贴合脸型',
-    '去掉眼镜':'去掉人物脸上的眼镜，露出完整五官自然协调',
-    '加一只橘猫':'在人物身旁添加一只橘猫，动作自然融入画面',
-    '手持咖啡杯':'让人物手中拿着一杯咖啡，握持姿势自然',
-    '添加耳环':'给人物添加金色耳环，随头部动作自然晃动'
+    '换发色银白':'头发变成银白色',
+    '戴上墨镜':'戴上黑色墨镜',
+    '去掉眼镜':'去掉眼镜，还原五官',
+    '加一只橘猫':'肩头趴一只橘猫在打盹',
+    '手持咖啡杯':'手里拿一杯热咖啡',
+    '添加耳环':'戴上金色圆环耳环'
   }
 };
 function pickOpt(el,grp){
@@ -716,19 +715,19 @@ document.addEventListener('mousedown',function(e){
 });
 
 /* === Spark === */
-var PROMPTS={
-  general:['将画面转为赛博朋克风，添加霓虹光效和暗色调','将背景替换成海边日落场景，金色光线洒在人物上','将头发颜色变成银白色，发丝光泽自然过渡','将画面变成水墨国风，笔触晕染留白自然','将背景换成演唱会现场，舞台灯光和人群氛围感','将上衣换成黑色皮夹克，皮质光泽自然反光','在人物身旁添加一只橘猫，动作自然融入画面','将画面转为像素游戏风格，保持轮廓可辨识'],
-  change_clothes:['将上衣替换成白色圆领T恤，自然贴合身体轮廓','将外套换成经典蓝色牛仔夹克，保持原有姿态','将衣服替换成修身黑色西装，整体剪裁协调','将上衣换成黑色皮夹克，皮质光泽自然反光'],
-  style:['将画面转为日系动漫风格，线条清晰色彩明亮','将画面变成水墨国风，笔触晕染留白自然','将画面转为赛博朋克风，添加霓虹光效和暗色调','将画面变成油画风格，保留厚重笔触和色彩层次'],
-  scene:['将背景替换成阳光明媚的户外草地，光影自然协调','将背景换成温馨咖啡厅内景，暖色灯光氛围','将背景替换成海边日落场景，金色光线洒在人物上','将背景换成繁华城市街道，景深和透视自然'],
-  local_edit:['将头发颜色变成银白色，发丝光泽自然过渡','给人物戴上黑色墨镜，镜片反光贴合脸型','在人物身旁添加一只橘猫，动作自然融入画面','给人物添加金色耳环，随头部动作自然晃动']
-};
+var PROMPTS=[
+  '画面转为赛博朋克风，霓虹灯光暗色调',
+  '背景换为海边日落，沙滩海浪橙红天空',
+  '画面变成黑白水墨画风格，留白大量',
+  '换上黑色皮夹克，拉链半开',
+  '头发变成银白色',
+  '画面变成像素风，8-bit复古游戏画面',
+  '肩头趴一只橘猫在打盹'
+];
 function doSpark(){
   var btn=document.getElementById('sparkBtn');btn.classList.remove('sparkling');void btn.offsetHeight;btn.classList.add('sparkling');
   setTimeout(()=>btn.classList.remove('sparkling'),450);
-  var sc=document.querySelector('.s-tag.on'),key='general';
-  if(sc){var m={'实时换装':'change_clothes','风格演绎':'style','场景切换':'scene','局部魔改':'local_edit'};key=m[sc.textContent]||'general'}
-  var pool=PROMPTS[key];document.getElementById('chatIn').value=pool[Math.floor(Math.random()*pool.length)];document.getElementById('chatIn').focus();
+  document.getElementById('chatIn').value=PROMPTS[Math.floor(Math.random()*PROMPTS.length)];document.getElementById('chatIn').focus();
 }
 
 function showAlert(msg){
