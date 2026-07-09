@@ -66,6 +66,9 @@ body{
 .ctrl-btn.warn{color:#B45309}
 .ctrl-btn.warn:hover{color:#92400E;background:rgba(251,191,36,.16)}
 .ctrl-btn[disabled]{opacity:.4;cursor:not-allowed;pointer-events:none}
+#clearFxBtn[disabled]{pointer-events:auto;cursor:not-allowed}
+#clearFxBtn:not([disabled]){color:var(--accent)}
+#clearFxBtn:not([disabled]):hover{background:var(--accent-light)}
 .video-body{aspect-ratio:16/9;position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#1A1920 0%,#1E1D24 40%,#1A1920 100%);overflow:hidden}
 .video-body video{width:100%;height:100%;object-fit:contain;position:absolute;inset:0;z-index:2}
 .v-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,.45)}
@@ -274,7 +277,10 @@ body{
     <div class="video-panel output-panel">
       <div class="video-panel-header">
         <div class="vp-title output"><i class="fa-solid fa-wand-magic-sparkles"></i>编辑结果</div>
-        <button class="rec-btn" id="recBtn" disabled data-tip="录制编辑片段" onclick="handleRecBtn()"><svg class="rec-ico" viewBox="0 0 12 12"><circle class="ring" cx="6" cy="6" r="5"/><circle class="dot" cx="6" cy="6" r="2.5"/></svg><span id="recLabel">录制</span></button>
+        <div class="vid-ctrls">
+          <button class="ctrl-btn" id="clearFxBtn" disabled data-tip="清除当前编辑效果" onclick="clearEffect()"><i class="fas fa-xmark"></i> 清除</button>
+          <button class="rec-btn" id="recBtn" disabled data-tip="录制编辑片段" onclick="handleRecBtn()"><svg class="rec-ico" viewBox="0 0 12 12"><circle class="ring" cx="6" cy="6" r="5"/><circle class="dot" cx="6" cy="6" r="2.5"/></svg><span id="recLabel">录制</span></button>
+        </div>
       </div>
       <div class="video-body">
         <div class="ed-badge" id="renderBadge"><i></i><span id="renderText">待机</span></div>
@@ -307,24 +313,29 @@ body{
       <span class="lbl">场景：</span>
       <button class="s-tag" onclick="toggleScene('change_clothes',this)">实时换装</button>
       <button class="s-tag" onclick="toggleScene('style',this)">风格演绎</button>
+      <button class="s-tag" onclick="toggleScene('face_edit',this)">外貌改造</button>
+      <button class="s-tag" onclick="toggleScene('material',this)">质感变身</button>
       <button class="s-tag" onclick="toggleScene('scene',this)">场景切换</button>
-      <button class="s-tag" onclick="toggleScene('local_edit',this)">局部魔改</button>
     </div>
     <div class="exp-panel" id="p_change_clothes">
       <div class="exp-hd"><div class="exp-title">实时换装</div><span class="exp-note">请确保画面中有清晰的人物主体</span><button class="exp-close" onclick="closeP('change_clothes')"><i class="fas fa-times"></i></button></div>
-      <div class="opt-row"><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">白T恤</button><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">牛仔夹克</button><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">黑色西装</button><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">碎花连衣裙</button><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">皮夹克</button><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">灰色卫衣</button></div>
+      <div class="opt-row"><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">白T恤</button><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">皮夹克</button><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">灰色卫衣</button><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">汉服</button><button class="opt-tag" onclick="pickOpt(this,'change_clothes')">学院风衬衫</button></div>
     </div>
     <div class="exp-panel" id="p_style">
       <div class="exp-hd"><div class="exp-title">风格演绎</div><button class="exp-close" onclick="closeP('style')"><i class="fas fa-times"></i></button></div>
       <div class="opt-row"><button class="opt-tag" onclick="pickOpt(this,'style')">日系动漫</button><button class="opt-tag" onclick="pickOpt(this,'style')">水墨国风</button><button class="opt-tag" onclick="pickOpt(this,'style')">赛博朋克</button><button class="opt-tag" onclick="pickOpt(this,'style')">油画质感</button><button class="opt-tag" onclick="pickOpt(this,'style')">胶片复古</button><button class="opt-tag" onclick="pickOpt(this,'style')">像素游戏</button></div>
     </div>
-    <div class="exp-panel" id="p_scene">
-      <div class="exp-hd"><div class="exp-title">场景切换</div><button class="exp-close" onclick="closeP('scene')"><i class="fas fa-times"></i></button></div>
-      <div class="opt-row"><button class="opt-tag" onclick="pickOpt(this,'scene')">户外草地</button><button class="opt-tag" onclick="pickOpt(this,'scene')">咖啡厅</button><button class="opt-tag" onclick="pickOpt(this,'scene')">海边日落</button><button class="opt-tag" onclick="pickOpt(this,'scene')">城市街道</button><button class="opt-tag" onclick="pickOpt(this,'scene')">图书馆</button></div>
+    <div class="exp-panel" id="p_face_edit">
+      <div class="exp-hd"><div class="exp-title">外貌改造</div><span class="exp-note">请确保画面中有清晰的人脸</span><button class="exp-close" onclick="closeP('face_edit')"><i class="fas fa-times"></i></button></div>
+      <div class="opt-row"><button class="opt-tag" onclick="pickOpt(this,'face_edit')">变成光头</button><button class="opt-tag" onclick="pickOpt(this,'face_edit')">戴上墨镜</button><button class="opt-tag" onclick="pickOpt(this,'face_edit')">加耳环</button><button class="opt-tag" onclick="pickOpt(this,'face_edit')">变老30岁</button><button class="opt-tag" onclick="pickOpt(this,'face_edit')">变年轻到18岁</button><button class="opt-tag" onclick="pickOpt(this,'face_edit')">加络腮胡</button></div>
     </div>
-    <div class="exp-panel" id="p_local_edit">
-      <div class="exp-hd"><div class="exp-title">局部魔改</div><span class="exp-note">请确保指令与当前画面内容匹配</span><button class="exp-close" onclick="closeP('local_edit')"><i class="fas fa-times"></i></button></div>
-      <div class="opt-row"><button class="opt-tag" onclick="pickOpt(this,'local_edit')">换发色银白</button><button class="opt-tag" onclick="pickOpt(this,'local_edit')">戴上墨镜</button><button class="opt-tag" onclick="pickOpt(this,'local_edit')">去掉眼镜</button><button class="opt-tag" onclick="pickOpt(this,'local_edit')">加一只橘猫</button><button class="opt-tag" onclick="pickOpt(this,'local_edit')">手持咖啡杯</button><button class="opt-tag" onclick="pickOpt(this,'local_edit')">添加耳环</button></div>
+    <div class="exp-panel" id="p_material">
+      <div class="exp-hd"><div class="exp-title">质感变身</div><span class="exp-note">把自己变成任何材质</span><button class="exp-close" onclick="closeP('material')"><i class="fas fa-times"></i></button></div>
+      <div class="opt-row"><button class="opt-tag" onclick="pickOpt(this,'material')">大理石雕塑</button><button class="opt-tag" onclick="pickOpt(this,'material')">乐高小人</button><button class="opt-tag" onclick="pickOpt(this,'material')">冰雕</button><button class="opt-tag" onclick="pickOpt(this,'material')">赛博机械体</button><button class="opt-tag" onclick="pickOpt(this,'material')">黏土动画</button><button class="opt-tag" onclick="pickOpt(this,'material')">金箔覆盖</button></div>
+    </div>
+    <div class="exp-panel" id="p_scene">
+      <div class="exp-hd"><div class="exp-title">场景切换</div><span class="exp-note">替换你身后的背景</span><button class="exp-close" onclick="closeP('scene')"><i class="fas fa-times"></i></button></div>
+      <div class="opt-row"><button class="opt-tag" onclick="pickOpt(this,'scene')">咖啡厅</button><button class="opt-tag" onclick="pickOpt(this,'scene')">日式居酒屋</button><button class="opt-tag" onclick="pickOpt(this,'scene')">新闻演播室</button><button class="opt-tag" onclick="pickOpt(this,'scene')">城市天台</button><button class="opt-tag" onclick="pickOpt(this,'scene')">舞台聚光灯</button></div>
     </div>
   </div>
 </div>
@@ -358,7 +369,7 @@ function switchSrc(t,el){
     document.getElementById('volDock').classList.remove('show');
     document.getElementById('callNote').classList.remove('show');
     endRealtimeSession();
-    window.activeInput='none';setPauseUi(false);
+    window.activeInput='none';window.hasActiveEffect=false;setPauseUi(false);
     updateControlState();
   }
   document.getElementById('ovUpload').classList.toggle('hidden',t!=='upload');
@@ -468,6 +479,22 @@ function updateControlState(){
   var canPause=(window.activeInput==='upload'||window.activeInput==='call')&&!document.getElementById('camVid').classList.contains('hidden');
   document.getElementById('replayBtn').disabled=!canReplay;
   document.getElementById('pauseBtn').disabled=!canPause;
+  updateClearFxBtn();
+}
+function updateClearFxBtn(){
+  var btn=document.getElementById('clearFxBtn');
+  btn.disabled=!window.hasActiveEffect;
+}
+function clearEffect(){
+  if(!window.hasActiveEffect)return;
+  window.hasActiveEffect=false;
+  var ev=document.getElementById('edVid');
+  var cv=document.getElementById('camVid');
+  if(!ev.classList.contains('hidden')&&!cv.classList.contains('hidden')){
+    ev.src=cv.src;ev.currentTime=cv.currentTime;ev.play();
+  }
+  setRenderState('idle');
+  updateClearFxBtn();updateRecBtnState();
 }
 function togglePause(){
   var v=document.getElementById('camVid');
@@ -504,7 +531,7 @@ function stopSession(){
   document.getElementById('callNote').classList.remove('show');
   document.getElementById('volDock').classList.remove('show');
   endRealtimeSession();
-  window.activeInput='none';setPauseUi(false);
+  window.activeInput='none';window.hasActiveEffect=false;setPauseUi(false);
   stopRec();updateControlState();updateRecBtnState();
 }
 
@@ -644,35 +671,42 @@ document.addEventListener('mousedown',function(e){
 /* Text option tags — descriptive prompts */
 var OPT_PROMPTS={
   change_clothes:{
-    '白T恤':'换上白色圆领T恤',
-    '牛仔夹克':'换上蓝色牛仔夹克，敞开穿',
-    '黑色西装':'换上黑色西装，白衬衫打底',
-    '碎花连衣裙':'换上碎花连衣裙，裙摆随动作飘动',
-    '皮夹克':'换上黑色皮夹克，拉链半开',
-    '灰色卫衣':'换上灰色连帽卫衣，宽松版型'
+    '白T恤':'仅将上衣换为白色圆领纯棉T恤，可见棉质纹理。保持面部、发型、姿态、动作和背景不变。',
+    '皮夹克':'仅将外套换为哑光黑色皮质机车夹克，银色拉链拉到一半。保持面部、发型、姿态、动作和背景不变。',
+    '灰色卫衣':'仅将上衣换为宽松麻灰色纯棉连帽卫衣，帽子自然垂在肩上。保持面部、发型、姿态、动作和背景不变。',
+    '汉服':'仅将服装换为传统汉服交领右衽上衣，浅白色底布绣淡金色云纹，袖口宽大自然垂落。保持面部、发型、姿态、动作和背景不变。',
+    '学院风衬衫':'仅将上衣换为白色翻领衬衫搭配深藏青色V领针织马甲，领口系一条酒红色斜纹领带。保持面部、发型、姿态、动作和背景不变。'
   },
   style:{
-    '日系动漫':'画面转为日系动漫风，线条清晰色彩鲜艳',
-    '水墨国风':'画面变成黑白水墨画风格，留白大量',
-    '赛博朋克':'画面转为赛博朋克风，霓虹灯光暗色调',
-    '油画质感':'画面变成油画风格，厚重色彩笔触感',
-    '胶片复古':'画面加胶片效果，颗粒感和褪色暖调',
-    '像素游戏':'画面变成像素风，8-bit复古游戏画面'
+    '日系动漫':'将视频转换为手绘日本赛璐珞动画风格：应用平涂着色、锐利的黑色轮廓线、极简的光影细腻度，以及传统动漫中典型的鲜艳且高饱和度的色彩。保持主体动作、镜头轨迹和构图不变。',
+    '水墨国风':'将整个画面渲染为中国水墨画风格。保持主体动作、镜头轨迹和构图不变。',
+    '赛博朋克':'将整个画面转化为赛博朋克的风格。保持主体动作、镜头轨迹和构图不变。',
+    '油画质感':'将整个画面转换为梵高的画的风格。应用厚重、富有表现力的笔触，鲜艳且强烈的色彩，天空中和风景中动态旋转的纹理，以及梵高画作中特有的粗放油彩（厚涂法）效果。保持主体动作、镜头轨迹和构图不变。',
+    '胶片复古':'施加模拟胶片质感。保持主体动作、镜头轨迹和构图不变。',
+    '像素游戏':'将整个画面渲染为16色像素画风格。保持主体动作、镜头轨迹和构图不变。'
+  },
+  face_edit:{
+    '变成光头':'删除人物头部的头发，完全去除所有发丝，同时保留头皮自然的皮肤纹理和色调。确保发际线和太阳穴处无缝融合，并与周围皮肤保持一致的光照和阴影。保持面部、表情、动作、服装和背景不变。',
+    '戴上墨镜':'仅添加一副黑色醋酸纤维飞行员墨镜架在鼻梁上。保持面部、发型、动作、服装和背景不变。',
+    '加耳环':'仅在双耳耳垂添加一对抛光金色圆环耳环。保持面部、发型、动作、服装和背景不变。',
+    '变老30岁':'仅让面部老化30岁：额头和眼角出现深刻皱纹、法令纹加深、皮肤松弛下垂、头发变为花白稀疏，眼袋明显。保持五官轮廓、动作、服装和背景不变。',
+    '变年轻到18岁':'仅让面部年轻化至18岁：皮肤光滑紧致无瑕疵、面部轮廓饱满圆润、嘴唇色泽红润、眼睛明亮有神，头发浓密有光泽。保持五官轮廓、动作、服装和背景不变。',
+    '加络腮胡':'仅在下颌和脸颊添加浓密的深棕色络腮胡须，长度约1厘米，自然卷曲，覆盖下巴和两颊；随说话动作自然变形。保持面部、发型、动作、服装和背景不变。'
+  },
+  material:{
+    '大理石雕塑':'将人物整体转化为白色大理石雕塑：可见石材纹理和细微灰色脉络、表面呈抛光光泽、光线在曲面形成柔和高光，眼睛和头发同为石质，保持原有动作但带有雕塑般的质感。保持主体姿态、动作和构图不变。',
+    '乐高小人':'将人物转化为乐高积木小人风格：黄色圆柱形头部、C形手爪、方块状躯干，表面为塑料亚光质感，五官简化为印刷贴纸式的黑色圆点眼睛和弧线微笑。保持主体姿态、动作和构图不变。',
+    '冰雕':'将人物整体转化为透明冰雕：半透明冰蓝色材质、内部可见气泡和冰裂纹、光线穿透时产生折射彩虹、表面有薄霜覆盖，边缘锐利如切割面。保持主体姿态、动作和构图不变。',
+    '赛博机械体':'将人物转化为机械生化体：面部半边露出银色金属骨架和精密齿轮、眼睛发出冷蓝光、皮肤接缝处可见荧光线路板纹路，关节处有可见的液压结构。保持主体姿态、动作和构图不变。',
+    '黏土动画':'将人物转化为定格黏土动画角色：表面可见手工捏制的指纹压痕和不规则质感、色彩饱和但略带哑光、比例微微卡通化（头部略大）。保持主体姿态、动作和构图不变。',
+    '金箔覆盖':'将人物表面覆盖一层锤打金箔：可见金属褶皱和不规则裂纹、在光源方向呈现强烈镜面反射、暗面为深琥珀色，整体如同镀金雕像但保持原有动作流畅度。保持主体姿态、动作和构图不变。'
   },
   scene:{
-    '户外草地':'背景换为阳光下的户外草地',
-    '咖啡厅':'背景换为咖啡厅内，暖黄灯光',
-    '海边日落':'背景换为海边日落，沙滩海浪橙红天空',
-    '城市街道':'背景换为城市街道，车流和高楼',
-    '图书馆':'背景换为图书馆，书架排列光线柔和'
-  },
-  local_edit:{
-    '换发色银白':'头发变成银白色',
-    '戴上墨镜':'戴上黑色墨镜',
-    '去掉眼镜':'去掉眼镜，还原五官',
-    '加一只橘猫':'肩头趴一只橘猫在打盹',
-    '手持咖啡杯':'手里拿一杯热咖啡',
-    '添加耳环':'戴上金色圆环耳环'
+    '咖啡厅':'将背景替换为舒适的咖啡馆内部，具备温暖的光照、木质桌子、咖啡机，以及摆放着书籍和马克杯的书架。前景中的人物保持不变，包括其衣服、姿势和动作，并确保主体与新背景之间具备准确的光照与阴影一致性。',
+    '日式居酒屋':'仅替换背景为日式居酒屋内景：暖黄灯笼垂挂、木质吧台、身后墙上贴满手写菜单纸条，空气中隐约可见暖光散射。前景中的人物保持不变，包括其衣服、姿势和动作，并确保主体与新背景之间具备准确的光照与阴影一致性。',
+    '新闻演播室':'将背景替换为新闻直播演播室场景，包含典型元素如显示新闻画面的大型LED显示墙、配有麦克风的主播台，以及带有专业背景的柔和演播室光照。前景中的人物保持不变，包括其衣服、姿势和动作，并确保主体与新背景之间具备准确的光照与阴影一致性。',
+    '城市天台':'仅替换背景为高楼天台：身后是傍晚城市天际线，远处建筑轮廓和零星亮起的窗户灯光，天空呈深蓝到橙色渐变。前景中的人物保持不变，包括其衣服、姿势和动作，并确保主体与新背景之间具备准确的光照与阴影一致性。',
+    '舞台聚光灯':'仅改变光源：从头顶正上方打下一束圆形硬光聚光灯，照亮面部和肩部，其余区域急剧衰减为深黑色，光束中可见浮尘颗粒。保持主体动作和服装不变。'
   }
 };
 function pickOpt(el,grp){
@@ -716,13 +750,16 @@ document.addEventListener('mousedown',function(e){
 
 /* === Spark === */
 var PROMPTS=[
-  '画面转为赛博朋克风，霓虹灯光暗色调',
-  '背景换为海边日落，沙滩海浪橙红天空',
-  '画面变成黑白水墨画风格，留白大量',
-  '换上黑色皮夹克，拉链半开',
-  '头发变成银白色',
-  '画面变成像素风，8-bit复古游戏画面',
-  '肩头趴一只橘猫在打盹'
+  '仅将外套换为哑光黑色皮质机车夹克，银色拉链拉到一半。保持面部、发型和动作不变。',
+  '将画面渲染为手绘日系赛璐璐动画风格，干净墨线勾边，平涂色块。保持主体动作和构图不变。',
+  '将画面渲染为中国水墨画风格：宣纸白底黑色墨笔笔触，大面积留白。保持主体动作和构图不变。',
+  '让面部老化30岁：额头眼角出现深刻皱纹，头发变为花白。保持五官轮廓和动作不变。',
+  '将人物整体转化为白色大理石雕塑，可见石材纹理和抛光光泽。保持主体姿态和动作不变。',
+  '将人物转化为乐高积木小人：黄色圆柱头、C形手爪、方块躯干。保持主体姿态和动作不变。',
+  '仅从头顶打下一束聚光灯，照亮面部和肩部，其余区域衰减为深黑色。保持主体动作和服装不变。',
+  '仅将服装换为传统汉服交领右衽，浅白色底布绣淡金色云纹，袖口宽大垂落。保持面部、发型和动作不变。',
+  '将人物表面覆盖锤打金箔，可见金属褶皱和镜面反射。保持主体姿态和动作不变。',
+  '仅替换背景为日式居酒屋：暖黄灯笼、木质吧台、墙上手写菜单。保持主体身份和动作不变。'
 ];
 function doSpark(){
   var btn=document.getElementById('sparkBtn');btn.classList.remove('sparkling');void btn.offsetHeight;btn.classList.add('sparkling');
@@ -746,15 +783,31 @@ function showMiniToast(msg){
 
 /* === Send === */
 var renderTimer=null;
+function getEstTime(){
+  if(window.activeInput!=='upload')return '';
+  var v=document.getElementById('camVid');
+  if(!v||!v.duration||!isFinite(v.duration))return '';
+  var sec=Math.ceil(v.duration*1.5);
+  if(sec<60)return sec+'秒';
+  var m=Math.floor(sec/60),s=sec%60;
+  return m+'分钟'+(s>0?s+'秒':'');
+}
 function setRenderState(state){
   var badge=document.getElementById('renderBadge');
   var text=document.getElementById('renderText');
   var outPanel=document.querySelector('.output-panel');
+  var ph=document.getElementById('edPH');
   if(!badge||!text)return;
   badge.classList.remove('rendering','done','error');
   if(outPanel)outPanel.classList.remove('flash');
-  if(state==='idle'){text.textContent='待机';return}
-  if(state==='rendering'){badge.classList.add('rendering');text.textContent='渲染中';updateRecBtnState();return}
+  if(state==='idle'){text.textContent='待机';if(ph)ph.innerHTML='<i class="fas fa-wand-magic-sparkles"></i><p>等待编辑指令</p>';return}
+  if(state==='rendering'){
+    badge.classList.add('rendering');text.textContent='渲染中';
+    if(ph&&!ph.classList.contains('hidden')){
+      var est=getEstTime();
+      ph.innerHTML='<i class="fas fa-spinner fa-spin" style="opacity:.7;font-size:20px"></i><p style="margin-top:10px;font-size:12px;color:rgba(255,255,255,.55);text-align:center;line-height:1.6">渲染中，请耐心等待'+(est?'<br>预计 '+est:'')+'</p>';
+    }
+    updateRecBtnState();return}
   if(state==='done'){badge.classList.add('done');text.textContent='已完成';if(outPanel){void outPanel.offsetWidth;outPanel.classList.add('flash')}updateRecBtnState();return}
   if(state==='error'){badge.classList.add('error');text.textContent='失败';updateRecBtnState();return}
 }
@@ -764,6 +817,8 @@ function send(){
   if(window.sessionEnded){showAlert('对话已结束');return}
   if(renderTimer)clearTimeout(renderTimer);
   setRenderState('rendering');
+  window.hasActiveEffect=true;
+  updateClearFxBtn();
   hist.push({text:v,img:null,vote:0});
   renderHist();inp.value='';
   renderTimer=setTimeout(function(){
@@ -790,6 +845,7 @@ function newSession(){
 }
 window.activeInput='none';
 window.srcTab='upload';
+window.hasActiveEffect=false;
 updateControlState();updateRecBtnState();
 setRenderState('idle');
 
@@ -799,7 +855,7 @@ setRenderState('idle');
   document.querySelectorAll('[data-tip]').forEach(function(el){
     if(el.classList.contains('cap-btn'))return;
     el.addEventListener('mouseenter',function(){
-      if(el.disabled)return;
+      if(el.disabled&&el.id!=='clearFxBtn')return;
       tip.textContent=el.getAttribute('data-tip');
       var r=el.getBoundingClientRect();
       tip.style.left=r.left+r.width/2+'px';
