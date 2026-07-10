@@ -371,6 +371,7 @@ function switchSrc(t,el){
     endRealtimeSession();
     window.activeInput='none';window.hasActiveEffect=false;setPauseUi(false);
     updateControlState();
+    hist=[];renderHist();
   }
   document.getElementById('ovUpload').classList.toggle('hidden',t!=='upload');
   document.getElementById('ovStream').classList.toggle('hidden',t!=='stream');
@@ -414,6 +415,7 @@ function onUpload(e){
     var ev=document.getElementById('edVid');ev.src=u;ev.classList.remove('hidden');ev.play();
     document.getElementById('edPH').classList.add('hidden');
     window.activeInput='upload';setPauseUi(false);updateControlState();updateRecBtnState();
+    hist=[];renderHist();
     document.getElementById('callNote').classList.remove('show');
     document.getElementById('volDock').classList.add('show');
     setCamVolume(document.getElementById('volRange').value);
@@ -453,6 +455,7 @@ function doStream(){
   setCamVolume(document.getElementById('volRange').value);
   beginRealtimeSession();
   window.activeInput='stream';setPauseUi(false);updateControlState();updateRecBtnState();
+  hist=[];renderHist();
 }
 function doCall(){
   hideOvs();document.getElementById('camPH').classList.add('hidden');
@@ -464,6 +467,7 @@ function doCall(){
     document.getElementById('volDock').classList.remove('show');
     beginRealtimeSession();
     window.activeInput='call';setPauseUi(false);updateControlState();updateRecBtnState();
+    hist=[];renderHist();
   }).catch(()=>{
     var ph=document.getElementById('camPH');ph.classList.remove('hidden');
     ph.innerHTML='<i class="fas fa-video-slash"></i><p>摄像头权限被拒绝</p>';
