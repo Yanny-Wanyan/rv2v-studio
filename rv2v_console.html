@@ -56,10 +56,10 @@ body{
 .vp-title.source i{color:var(--accent)}
 .vp-title.output i{color:var(--accent)}
 .vp-title .rec{width:5px;height:5px;border-radius:50%;background:#EF4444;animation:pulse 1.5s infinite}
-.source-sel{display:flex;align-items:center;gap:3px;height:100%}
-.src-btn{height:24px;min-height:24px;padding:0 8px;border-radius:5px;line-height:24px;font-size:10px;font-weight:500;color:var(--text3);border:none;background:transparent;cursor:pointer;transition:all .12s;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;gap:4px}
-.src-btn:hover{color:var(--text2);background:rgba(255,255,255,.4)}
-.src-btn.on{color:var(--accent);background:var(--accent-light)}
+.seg-ctrl{display:flex;align-items:center;height:26px;background:rgba(0,0,0,.04);border-radius:7px;padding:2px;gap:0}
+.seg-btn{height:22px;padding:0 12px;border-radius:5px;font-size:10px;font-weight:500;color:var(--text3);border:none;background:transparent;cursor:pointer;transition:all .15s;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;gap:5px}
+.seg-btn:hover{color:var(--text2)}
+.seg-btn.on{color:var(--accent);background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .vid-ctrls{display:flex;align-items:center;gap:4px;height:100%}
 .ctrl-btn{height:24px;min-height:24px;padding:0 8px;border-radius:5px;line-height:24px;font-size:10px;font-weight:500;color:var(--text3);border:none;background:transparent;cursor:pointer;transition:all .12s;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
 .ctrl-btn:hover{color:var(--text2);background:rgba(255,255,255,.4)}
@@ -74,12 +74,9 @@ body{
 .v-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,.45)}
 .v-placeholder i{font-size:24px}
 .v-placeholder p{font-size:10px;opacity:.7}
+.video-body .ov:not(.hidden) ~ .v-placeholder{visibility:hidden}
 .ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);z-index:5;cursor:pointer;transition:background .2s}
 .ov:hover{background:rgba(0,0,0,.5)}
-.ov-inner{text-align:center;color:rgba(255,255,255,.6)}
-.ov-inner i{font-size:28px;margin-bottom:6px;display:block}
-.ov-inner p{font-size:10px;opacity:.7}
-.ov input[type=file]{display:none}
 .ov-stream{cursor:default}
 .ov-stream .sf{display:flex;gap:6px;width:320px;margin:0 auto}
 .ov-stream .sf input{flex:1;padding:8px 11px;border-radius:7px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-size:11px;font-family:inherit}
@@ -215,9 +212,9 @@ body{
 .alert-text{font-size:14px;color:var(--text);line-height:1.5}
 .alert-actions{margin-top:12px;display:flex;justify-content:flex-end}
 .alert-actions button{padding:7px 14px;border:none;border-radius:8px;background:var(--accent);color:#fff;font-size:12px;cursor:pointer}
-.call-note{display:none;margin-top:8px;padding:8px 14px;border-radius:8px;background:rgba(251,191,36,.1);border-left:3px solid #F59E0B;font-size:11px;color:#92400E;line-height:1.4;flex-shrink:0;align-items:center;gap:7px}
+.call-note{display:none;margin-top:8px;padding:7px 14px;border-radius:8px;background:rgba(0,0,0,.03);font-size:11px;color:var(--text3);line-height:1.4;flex-shrink:0;align-items:center;gap:7px}
 .call-note.show{display:flex}
-.call-note i{font-size:12px;color:#D97706;flex-shrink:0}
+.call-note i{font-size:11px;color:var(--text3);flex-shrink:0;opacity:.6}
 .ov-call-tip{margin-top:14px;font-size:10px;color:rgba(255,255,255,.55);line-height:1.4;text-align:center}
 .video-vol{position:absolute;right:10px;bottom:10px;z-index:9;display:none;align-items:center;gap:0}
 .video-vol.show{display:flex}
@@ -251,23 +248,17 @@ body{
     <div class="video-panel">
       <div class="video-panel-header">
         <div class="vp-title source"><i class="fa-solid fa-camera"></i>原始画面</div>
-        <div class="source-sel">
-          <button class="src-btn on" onclick="switchSrc('upload',this)"><i class="fas fa-upload"></i> 上传</button>
-          <button class="src-btn" onclick="switchSrc('stream',this)"><i class="fas fa-signal"></i> 直播流</button>
-          <button class="src-btn" onclick="switchSrc('call',this)"><i class="fas fa-camera"></i> 摄像头</button>
+        <div class="seg-ctrl">
+          <button class="seg-btn on" onclick="switchSrc('stream',this)"><i class="fas fa-signal"></i> 直播流</button>
+          <button class="seg-btn" onclick="switchSrc('call',this)"><i class="fas fa-camera"></i> 摄像头</button>
         </div>
         <div class="vid-ctrls">
           <button class="ctrl-btn" id="pauseBtn" onclick="togglePause()"><i class="fas fa-pause"></i> 暂停</button>
-          <button class="ctrl-btn" id="replayBtn" onclick="replayVideo()"><i class="fas fa-rotate-left"></i> 重播</button>
           <button class="ctrl-btn warn" onclick="stopSession()"><i class="fas fa-stop"></i> 退出</button>
         </div>
       </div>
       <div class="video-body" id="camBody">
-        <div class="ov" id="ovUpload" onclick="document.getElementById('fileIn').click()">
-          <div class="ov-inner"><i class="fas fa-cloud-arrow-up"></i><p>点击或拖拽上传视频</p></div>
-          <input type="file" id="fileIn" accept="video/*" onchange="onUpload(event)">
-        </div>
-        <div class="ov ov-stream hidden" id="ovStream"><div class="sf"><input type="text" id="streamUrl" placeholder="rtmp://stream.example.com/live/key"><button onclick="doStream()">连接</button></div></div>
+        <div class="ov ov-stream" id="ovStream"><div class="sf"><input type="text" id="streamUrl" placeholder="rtmp://stream.example.com/live/key"><button onclick="doStream()">连接</button></div></div>
         <div class="ov ov-call hidden" id="ovCall"><div><button onclick="doCall()"><i class="fas fa-camera"></i>开启摄像头</button><div class="ov-call-tip">仅采集画面，不支持语音；指令请使用文字输入</div></div></div>
         <video id="camVid" class="hidden" muted playsinline></video>
         <div class="v-placeholder" id="camPH"><i class="fas fa-video-slash"></i><p>等待视频输入</p></div>
@@ -291,6 +282,7 @@ body{
     </div>
   </div>
   <div class="call-note" id="callNote"><i class="fas fa-camera"></i><span>摄像头模式：仅采集画面，指令请使用文字输入</span></div>
+  <div class="call-note" id="fxNote"><i class="fas fa-clock"></i><span>编辑效果持续约 60 秒后自动消失，可随时点击「清除」手动退出</span></div>
   <div class="toast-anchor"><div class="mini-toast" id="miniToast"><i class="fas fa-circle-exclamation"></i><span id="miniToastText">提示</span></div></div>
 
   <div class="command-bar">
@@ -305,7 +297,7 @@ body{
         <button class="cap-btn" id="sparkBtn" data-tip="随机灵感" onclick="doSpark()">
           <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2 L13.5 9 L20 12 L13.5 15 L12 22 L10.5 15 L4 12 L10.5 9 Z"/></svg>
         </button>
-        <input class="cap-input" id="chatIn" type="text" placeholder="接入一段视频，试试替换、增减画面里的任何东西">
+        <input class="cap-input" id="chatIn" type="text" placeholder="开启视频流后，试试替换、增减画面里的任何东西">
         <button class="cap-send" onclick="send()"><i class="fas fa-arrow-up"></i></button>
       </div>
     </div>
@@ -354,13 +346,11 @@ body{
 <script>
 /* === Video source === */
 function switchSrc(t,el){
-  document.querySelectorAll('.src-btn').forEach(b=>b.classList.remove('on'));el.classList.add('on');
-  // If video is playing, reset both sides
+  document.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('on'));el.classList.add('on');
   var v=document.getElementById('camVid');
   var ev=document.getElementById('edVid');
   if(window.activeInput&&window.activeInput!=='none'){
     if(window.camStream){window.camStream.getTracks().forEach(tr=>tr.stop());window.camStream=null}
-    if(v.src){URL.revokeObjectURL(v.src)}
     v.pause();v.classList.add('hidden');v.src='';v.srcObject=null;
     ev.pause();ev.classList.add('hidden');ev.src='';
     document.getElementById('camPH').classList.remove('hidden');
@@ -373,7 +363,6 @@ function switchSrc(t,el){
     updateControlState();
     hist=[];renderHist();
   }
-  document.getElementById('ovUpload').classList.toggle('hidden',t!=='upload');
   document.getElementById('ovStream').classList.toggle('hidden',t!=='stream');
   document.getElementById('ovCall').classList.toggle('hidden',t!=='call');
   document.getElementById('volDock').classList.remove('show');
@@ -390,40 +379,6 @@ function setCamVolume(v){
 }
 function toggleVol(){
   document.getElementById('volSlider').classList.toggle('open');
-}
-function onUpload(e){
-  var f=e.target.files[0];if(!f)return;
-  if(f.type && !f.type.startsWith('video/')){showAlert('仅支持视频文件上传');return}
-  var u=URL.createObjectURL(f);
-  var probeUrl=URL.createObjectURL(f);
-  var v=document.getElementById('camVid');
-  var probe=document.createElement('video');
-  probe.preload='metadata';
-  var handled=false;
-  function proceed(){
-    if(handled)return;handled=true;
-    var d=probe.duration||0;
-    URL.revokeObjectURL(probeUrl);
-    if(d>300){
-      URL.revokeObjectURL(u);
-      showAlert('上传失败，视频最长5分钟');
-      return;
-    }
-    if(window.camStream){window.camStream.getTracks().forEach(t=>t.stop());window.camStream=null}
-    v.src=u;v.classList.remove('hidden');v.play();hideOvs();
-    document.getElementById('camPH').classList.add('hidden');
-    var ev=document.getElementById('edVid');ev.src=u;ev.classList.remove('hidden');ev.play();
-    document.getElementById('edPH').classList.add('hidden');
-    window.activeInput='upload';setPauseUi(false);updateControlState();updateRecBtnState();
-    hist=[];renderHist();
-    document.getElementById('callNote').classList.remove('show');
-    document.getElementById('volDock').classList.add('show');
-    setCamVolume(document.getElementById('volRange').value);
-  }
-  probe.onloadedmetadata=proceed;
-  probe.onerror=function(){URL.revokeObjectURL(probeUrl);URL.revokeObjectURL(u);showAlert('上传失败，请重试');};
-  probe.src=probeUrl;
-  setTimeout(function(){if(!handled)proceed()},2000);
 }
 function beginRealtimeSession(){
   window.sessionStartAt=Date.now();
@@ -473,21 +428,20 @@ function doCall(){
     ph.innerHTML='<i class="fas fa-video-slash"></i><p>摄像头权限被拒绝</p>';
   });
 }
-function hideOvs(){['ovUpload','ovStream','ovCall'].forEach(id=>document.getElementById(id).classList.add('hidden'))}
+function hideOvs(){['ovStream','ovCall'].forEach(id=>document.getElementById(id).classList.add('hidden'))}
 function setPauseUi(paused){
   var b=document.getElementById('pauseBtn');if(!b)return;
   b.innerHTML=paused?'<i class="fas fa-play"></i> 继续':'<i class="fas fa-pause"></i> 暂停';
 }
 function updateControlState(){
-  var canReplay=window.activeInput==='upload'&&!document.getElementById('camVid').classList.contains('hidden');
-  var canPause=(window.activeInput==='upload'||window.activeInput==='call')&&!document.getElementById('camVid').classList.contains('hidden');
-  document.getElementById('replayBtn').disabled=!canReplay;
+  var canPause=window.activeInput==='call'&&!document.getElementById('camVid').classList.contains('hidden');
   document.getElementById('pauseBtn').disabled=!canPause;
   updateClearFxBtn();
 }
 function updateClearFxBtn(){
   var btn=document.getElementById('clearFxBtn');
   btn.disabled=!window.hasActiveEffect;
+  document.getElementById('fxNote').classList.toggle('show',!!window.hasActiveEffect);
 }
 function clearEffect(){
   if(!window.hasActiveEffect)return;
@@ -503,35 +457,24 @@ function clearEffect(){
 function togglePause(){
   var v=document.getElementById('camVid');
   var ev=document.getElementById('edVid');
-  if(window.activeInput==='stream')return;
+  if(window.activeInput!=='call')return;
   if(v.classList.contains('hidden'))return;
   var paused=!v.paused;
   if(paused){v.pause();if(!ev.classList.contains('hidden'))ev.pause()}else{v.play();if(!ev.classList.contains('hidden'))ev.play()}
   setPauseUi(paused);
 }
-function replayVideo(){
-  if(window.activeInput!=='upload')return;
-  var v=document.getElementById('camVid');
-  var ev=document.getElementById('edVid');
-  if(v.classList.contains('hidden'))return;
-  v.currentTime=0;v.play();
-  if(!ev.classList.contains('hidden')){ev.currentTime=0;ev.play()}
-  setPauseUi(false);
-}
 function stopSession(){
   var v=document.getElementById('camVid');
   var ev=document.getElementById('edVid');
   if(window.camStream){window.camStream.getTracks().forEach(t=>t.stop());window.camStream=null}
-  if(v.src){URL.revokeObjectURL(v.src)}
   v.pause();v.classList.add('hidden');v.src='';v.srcObject=null;
   ev.pause();ev.classList.add('hidden');ev.src='';
   document.getElementById('camPH').classList.remove('hidden');
   document.getElementById('camPH').innerHTML='<i class="fas fa-video-slash"></i><p>等待视频输入</p>';
   document.getElementById('edPH').classList.remove('hidden');
-  document.getElementById('ovUpload').classList.remove('hidden');
-  document.getElementById('ovStream').classList.add('hidden');
+  document.getElementById('ovStream').classList.remove('hidden');
   document.getElementById('ovCall').classList.add('hidden');
-  document.querySelectorAll('.src-btn').forEach((b,i)=>b.classList.toggle('on',i===0));
+  document.querySelectorAll('.seg-btn').forEach((b,i)=>b.classList.toggle('on',i===0));
   document.getElementById('callNote').classList.remove('show');
   document.getElementById('volDock').classList.remove('show');
   endRealtimeSession();
@@ -593,48 +536,12 @@ function updateRecBtnState(){
   var hidden=ev.classList.contains('hidden');
   var btn=document.getElementById('recBtn');
   document.getElementById('edMute').classList.toggle('show',!hidden);
-  var isUpload=(window.srcTab||'upload')==='upload';
-  if(isUpload){
-    btn.innerHTML='<i class="fas fa-download" style="font-size:10px"></i><span id="recLabel">下载</span>';
-    btn.setAttribute('data-tip','下载编辑结果');
-    var done=document.getElementById('renderBadge')&&document.getElementById('renderBadge').classList.contains('done');
-    btn.disabled=hidden||!done;
-  }else{
-    btn.innerHTML='<svg class="rec-ico" viewBox="0 0 12 12"><circle class="ring" cx="6" cy="6" r="5"/><circle class="dot" cx="6" cy="6" r="2.5"/></svg><span id="recLabel">录制</span>';
-    btn.setAttribute('data-tip','录制编辑片段');
-    btn.disabled=hidden;
-  }
+  btn.innerHTML='<svg class="rec-ico" viewBox="0 0 12 12"><circle class="ring" cx="6" cy="6" r="5"/><circle class="dot" cx="6" cy="6" r="2.5"/></svg><span id="recLabel">录制</span>';
+  btn.setAttribute('data-tip','录制编辑片段');
+  btn.disabled=hidden;
 }
 function handleRecBtn(){
-  if((window.srcTab||'upload')==='upload'){downloadEdit()}else{toggleRec()}
-}
-function downloadEdit(){
-  var ev=document.getElementById('edVid');
-  if(ev.classList.contains('hidden')||!ev.src)return;
-  var canvas=document.createElement('canvas');
-  canvas.width=854;canvas.height=480;
-  var ctx=canvas.getContext('2d');
-  var stream=canvas.captureStream(30);
-  var opts={mimeType:'video/webm;codecs=vp9'};
-  if(!MediaRecorder.isTypeSupported(opts.mimeType))opts={mimeType:'video/webm'};
-  var mr=new MediaRecorder(stream,opts);
-  var chunks=[];
-  mr.ondataavailable=function(e){if(e.data.size>0)chunks.push(e.data)};
-  mr.onstop=function(){
-    var blob=new Blob(chunks,{type:'video/mp4'});
-    var a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
-    a.download='rv2v_edit_'+Date.now()+'.mp4';
-    a.click();
-    setTimeout(function(){URL.revokeObjectURL(a.href)},1000);
-  };
-  var clone=ev.cloneNode(true);
-  clone.muted=true;clone.currentTime=0;clone.play();
-  mr.start();
-  function draw(){ctx.drawImage(clone,0,0,854,480);if(!clone.ended)requestAnimationFrame(draw);else mr.stop()}
-  clone.addEventListener('seeked',function(){clone.play()});
-  clone.addEventListener('playing',function(){draw()});
-  clone.addEventListener('ended',function(){mr.stop()});
+  toggleRec();
 }
 
 /* === Image slot in input === */
@@ -775,6 +682,19 @@ function showAlert(msg){
   showMiniToast(msg);
 }
 function closeAlert(){document.getElementById('alertMask').classList.remove('show')}
+function showQueue(pos){
+  var el=document.getElementById('queueNote');
+  var txt=document.getElementById('queueText');
+  txt.textContent='当前使用人数较多，您排在第 '+pos+' 位';
+  el.classList.add('show');
+  document.querySelector('.cap-send').disabled=true;
+  window.isQueuing=true;
+}
+function hideQueue(){
+  document.getElementById('queueNote').classList.remove('show');
+  document.querySelector('.cap-send').disabled=false;
+  window.isQueuing=false;
+}
 function showServerBusyAlert(){showAlert('服务器繁忙，请稍后再试')}
 var miniToastTimer=null;
 function showMiniToast(msg){
@@ -787,15 +707,7 @@ function showMiniToast(msg){
 
 /* === Send === */
 var renderTimer=null;
-function getEstTime(){
-  if(window.activeInput!=='upload')return '';
-  var v=document.getElementById('camVid');
-  if(!v||!v.duration||!isFinite(v.duration))return '';
-  var sec=Math.ceil(v.duration*1.5);
-  if(sec<60)return sec+'秒';
-  var m=Math.floor(sec/60),s=sec%60;
-  return m+'分钟'+(s>0?s+'秒':'');
-}
+function getEstTime(){return ''}
 function setRenderState(state){
   var badge=document.getElementById('renderBadge');
   var text=document.getElementById('renderText');
@@ -833,9 +745,6 @@ function send(){
 }
 document.getElementById('chatIn').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();send()}});
 
-/* === Drag video === */
-document.getElementById('camBody').addEventListener('dragover',e=>e.preventDefault());
-document.getElementById('camBody').addEventListener('drop',e=>{e.preventDefault();var f=e.dataTransfer.files[0];if(f&&f.type.startsWith('video/'))onUpload({target:{files:[f]}})});
 
 /* === New session === */
 function newSession(){
@@ -848,7 +757,7 @@ function newSession(){
   document.querySelectorAll('.card-item').forEach(t=>t.classList.remove('on'));
 }
 window.activeInput='none';
-window.srcTab='upload';
+window.srcTab='stream';
 window.hasActiveEffect=false;
 updateControlState();updateRecBtnState();
 setRenderState('idle');
